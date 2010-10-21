@@ -1,0 +1,877 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-nz">
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=iso-8859-1">
+  <title>CutList 4.1.1</title>
+  <script type="text/javascript" src="tabber.js"></script>
+  <link rel="stylesheet" href="example.css" TYPE="text/css" MEDIA="screen">
+  <!-- <link rel="stylesheet" href="example-print.css" TYPE="text/css" MEDIA="print"> -->
+    
+  <script>
+  /* Temporarily hide the "tabber" class so it does not "flash"
+   on the page as plain HTML. After tabber runs, the class is changed
+   to "tabberlive" and it will appear. */
+
+document.write('<style type="text/css">.tabber{display:none;}<\/style>');
+
+var cookieExpiry=3650; //  10 years
+
+function get_current_options(outFileName,clpFileName){
+  var res = "";
+	res = res + document.getElementById('compactListOption').value;
+	res = res + ',' + document.getElementById('nominalOut').checked;
+	res = res + ',' + document.getElementById('linearFeet').checked;
+	res = res + ',' + document.getElementById('outputFileUsed').checked;
+	res = res + ',' + outFileName;
+	res = res + ',' + document.getElementById('clpFileUsed').checked;
+	res = res + ',' + clpFileName;
+	res = res + ',' + document.getElementById('printPage').checked;
+	res = res + ',' + escape(document.getElementById('partwords').value);		
+	res = res + ',' + escape(document.getElementById('sheetwords').value);
+	res = res + ',' + document.getElementById('comps').checked;
+	res = res + ',' + document.getElementById('sheet').checked;
+	res = res + ',' + document.getElementById('parts').checked;
+	res = res + ',' + document.getElementById('forceBoardFeet').checked;
+	res = res + ',' + document.getElementById('fourq').checked;
+	res = res + ',' + document.getElementById('fiveq').checked;
+	res = res + ',' + document.getElementById('sixq').checked;
+	res = res + ',' + document.getElementById('eightq').checked;
+	res = res + ',' + document.getElementById('tenq').checked;
+	res = res + ',' + escape(document.getElementById('nominalMargin').value);		
+	res = res + ',' + document.getElementById('layout').checked;	
+	res = res + ',' + document.getElementById('boardWidthOptions').value;	
+	res = res + ',' + document.getElementById('boardLengthOptions').value;	
+	res = res + ',' + document.getElementById('sheetWidthOptions').value;	
+	res = res + ',' + document.getElementById('sheetLengthOptions').value;	
+	res = res + ',' + document.getElementById('nominalWidth').checked;	
+	res = res + ',' + document.getElementById('kerfSize').value;
+	res = res + ',' + document.getElementById('splitWideParts').checked;	
+	res = res + ',' + document.getElementById('splitThickParts').checked;	
+	res = res + ',' + document.getElementById('layoutRuleA').checked;	
+	res = res + ',' + document.getElementById('layoutRuleB').checked;	
+	res = res + ',' + document.getElementById('layoutByMaterial').checked;	
+	res = res + ',' + document.getElementById('displayUnplacedParts').checked;	
+	res = res + ',' + document.getElementById('svgLayout').checked;	
+	res = res + ',' + document.getElementById('useSawKerf').checked;	
+	res = res + ',' + escape(document.getElementById('sawKerfSize').value);	
+	res = res + ',' + escape(document.getElementById('sawKerfUnits').value);	
+
+return res
+}
+
+function handleRun(){
+
+    var outFileName = "";
+	if(document.getElementById('outputFileUsed').checked){
+	  outFileName = document.getElementById('outputFile').value;
+	}
+
+    var clpFileName = "";
+	if(document.getElementById('clpFile').checked){
+	  clpFileName = escape(document.getElementById('clpFile').value);
+	}
+
+	var res='skp:handleRun@';
+  res = res + get_current_options(outFileName,clpFileName)
+		
+	window.location=res;
+}
+
+/* Cookie code  
+ *Copyright (c) 2007 by John W. M. Russell VE3LL@COGECO.CA.
+ * All rights reserved. May be freely copied or excerpted for educational
+ * purposes with credit to the author. 
+*/
+
+function bakeCookie(name,value) {
+  args=arguments;
+  argc=args.length;
+  expires=(argc>2) ? args[2] : null;
+  path=(argc>3) ? args[3] : null;
+  domain=(argc>4) ? args[4] : null;
+  secure=(argc>5) ? args[5] : false;
+  expDate=new Date();day=24*60*60*1000;
+  if (expires){expDate.setTime(expDate.getTime()+expires*day);}
+  string=name+"="+escape(value) +
+    ((expires === null) ? "" : ("; expires="+expDate.toUTCString()))+
+    ((path === null) ? "" : ("; path="+path))+
+    ((domain === null) ? "" : ("; domain="+domain))+
+    ((secure === true) ? "; secure" : "");
+    document.cookie = string;
+}
+
+function eatCookieVal(name) {
+  endstr=document.cookie.indexOf(";",name);
+  if (endstr === -1) {endstr=document.cookie.length;}
+  return unescape(document.cookie.substring(name,endstr));
+}
+
+function eatCookie(name) {
+  arg=name+"="; 
+  alen=arg.length;
+  clen=document.cookie.length; 
+  i=0;
+  while (i<clen) {
+    j=i+alen;
+    if (document.cookie.substring(i,j) === arg) {
+          return eatCookieVal(j);
+    }
+    i=document.cookie.indexOf(" ",i) + 1;
+    if (i === 0) {break;}
+  }
+  return null
+}
+
+function eraseCookie(name) {
+  bakeCookie(name,"",-1);
+}
+
+function handleSaveConfig(){
+  saveBooleanElementValues();
+  saveRadioElementValues();
+  saveTextElementValues();
+  saveSelectElementValues();
+  alert("Settings Saved");
+  //var res='skp:handleSaveConfig@';
+  //res = res + get_current_options()
+  //window.location = res
+}
+
+function handleOutputFile(radio, file){
+	if(radio.checked){
+		document.getElementById(file).disabled = false;
+	}
+	else{
+		document.getElementById(file).disabled = true;
+	}
+}
+
+function handleClose(){
+	window.location='skp:handleClose@x';
+}
+
+function handleHelp(helpNo){
+    document.getElementById('helpDiv').innerHTML = eval('help'+helpNo);
+	javascript:setVisible('helpDiv');
+}
+
+var help0 = "Welcome to Cut List and Materials!<BR><BR>This application allows you to see a consolidated list of all the Sketchup components you have selected in your drawing.  Once you have selected the components you want to list click the Run button on this screen.  Your result tables will be listed on the screen and in the CSV files you select in the options.  The application now supports metric as well as Imperial units.  Those used in the table will be metric if your drawing uses metric units.<BR><BR>" +
+"You may have a problem where the dimensions given for your component are larger and not what you know your component to be.  What you are seeing happens when the components axes are not aligned with the main axes. Here is what you need to do to get the correct measurements.<BR>"+
+"<BR>"+
+"1) Create your object aligned to the main axes.<BR>"+
+"2) Select the whole object.<BR>"+
+"3) Create a component for this object. (Not a group, groups ignore axes.)<BR>"+
+"4) Triple click this component so that the object is selected within it.<BR>"+
+"5) Create a second nested component!<BR>"+
+"6) Now you can copy and rotate the top level component and the inner component will retain its correct dimensions. The inner component is now relative to the outer component rather than the drawing axes.<BR>"+
+"7) Apply materials and descriptions you want to use to the inner component.<BR>"+
+"8) Components that are already nested within another component should work fine.<BR>"+
+"<BR>"+
+"If you have objects that are already rotated you will have to unfortunatly do the following:<BR>"+
+"1) Change them to components from groups if necessary.<BR>"+
+"2) Triple click them to select the inner object.<BR>"+
+"3) Create a nested component as described above.<BR>"+
+"4) When you create this nested component you will see a blue bounding box that is not ligned up with you rotated object. This is what is being measured rather than your object.<BR>"+
+"5) Select the inner component, right click on it, and select change axes.<BR>"+
+"6) Set the axes along the edges of your component.<BR>"+
+"7) The dimensions should now show up correctly.<BR>"+
+"<BR>"+
+"In short:<BR>"+
+"a) Nest all components that will be rotated within an outer component.<BR>"+
+"b) Apply materials and names to the inner component.<BR>"+
+"c) Copy, move and rotate the outer component.<BR>"+
+"<BR>"+
+"Unfortunatly that is the only way around the problem right now without re-implememnting the bounding box logic that sketchup uses. It would be nice if they gave me a second function to use that gave the smallest bounding box independent of the axes used.<BR>";
+var help1 = "Select where you would like the cut list to be sent:<BR>Web Page will show the results in a new window and makes for easy printing.  CSV is a file that can be imported into Excel.  CutList Plus is a CSV file that is designed to be imported into the CutList Plus application.  The Parts table is not output to the CutList Plus file.";
+var help2 = "The Type is either Component, Sheet Goods or Parts.  Components are your normal woodworking pieces.  Sheet Goods are woodworking pieces that have a material assigned that contains one of the sheet goods words such as Veneer.  Parts are generally hardware pieces (screws, hinges etc.) and are identified with a component name that contains one of the recognized Part Words such as hardware. NOTE: Parts are not output for CutList Plus.";
+var help3 = "The selection of the tables option affects the way parts are shown in the tables.and the generation of the csv format"
+            + "The CutListPlus csv is an export format and so is not affected by the choice made here."
+	    + "Selecting the Compact Tables option will show a compact table of components and sheet goods."
+	    + "Rather than listing every single component individually, all identical components are shown only once in the table with a count "
+	    + "of the number of that component. The Parts table is always compact."
+	    + "If your components do not have names a name will be allocated so that similar sized components are grouped together in the compact view."
+	    + "The compact view ignores sub-assemblies, so even if the same part appears in more than 1 assemnbly, then they are compacted. The sub-assembly name, "
+	    + "therefore, does not apply and is not displayed when this option is selected."
+	    + "The compact list is useful to get a count of the same number of parts regardless of where they end up"
+	    + "The compact list is always listed in alphabetical order by part name."
+	    + "The compact view also contains the total length of similar components.<p>"
+	    + "The 'List All in Component Order' will simply list the components and sheet parts as they are found which is roughly in subassembly order.<p> "
+	    + "The 'List All Sorted' selection' displays the components and sheet parts sorted by size from greatest amount of board feet to least.";
+var help4 = "This is a space separated list of words that are used to identify hardware Parts for the Parts table.  If one of these words is found as a portion of a SketchUp component name the component is classified as a Part.<br> The words are not case sensitive so 'Part' will match both 'part' and 'Part' and even 'parT'.";
+var help5 = "This is a space separated list of words that are used to identify sheet goods for the sheet goods table.  If one of these words is found as a portion of a material name applied to a SketchUp the component is classified as a Sheet Good. ** For a sheet goods to be recognized, the sheet word MUST be in the applied material name NOT the component name.<br> The words are not case sensitive so 'sheet' will match both 'Sheet' and 'sheet'.";
+var help6 = "Selecting the force Board Feet option will ensure that board board volume will be calculated and displayed in board feet, even if metric measure is being used. If your settings are in Imperial measure then board feet is calculated automatically and setting this option will not have any impact.";
+var help7 = "Select the nominal rough lumber sizes that you want your component thickness rounded up to.  This will then be used in the board foot calculations.  This calculation does not apply to sheet goods.";
+var help8 = "Choose this option if you want the nominal sizes selected above to be shown as the component thickness in the output.  This does not apply to sheet goods.";
+var help9 = "Valid values are 0,1,2,3,4 or 5. The minimum number of 1/16s of an inch you intend to remove from the rough lumber to achieve final thickness. This is used to calculate the rounding up for nominal thickness.  For example if this value is 3 (i.e. 3/16), then a thickness of 3/4 will round up to 4 quarters, 13/16 will round to 4 quarters, BUT 7/8 will round to the next size up such as 5 quarters. With a value of 0, 1 inch will stay 1 inch.";
+var help10 = "Produce a layout of the cut list. <BR>Solid wood components are layed out on the best selected board. Sheet Goods are laid out on 4'x8' sheet stock. The parts list is not used";
+var help11 = "Nominal Board layout width options; For the option where the program selects the boards for you, select the desired board width.<BR>The layout program will only use the actual board width  based on the nominal width size selected. For boards 6in or less this is 1/2in less than nominal, else 3/4in less than nominal.";
+var help12 = "Board layout length options; For the option where the program selects the boards for you, select the desired board length.<BR>The layout program will only use the board size selected.";
+var help13 = "Sheet layout width options; For the option where the program selects the boards for you, select the desired sheet goods width.<BR>The layout program will only use the sheet size selected.";
+var help14 = "Sheet layout length options; For the option where the program selects the boards for you, select the desired sheet goods length.<BR>The layout program will only use the sheet size selected.";
+var help15 = "Normally boards are sold in nominal sizes, which means that the quoted width is only a description for the actual width which is actually smaller. This can be quite confusing. I know, I used to work for Home Depot and had to try to explain to a lot of people why they seemed to be getting ripped off. However, this is an industry practice, not the retailer's." + 
+               "The nominal size was the size of the board before planing or surfacing, so the actual size of a 'dressed' board (one that has been factory planed) is smaller.<br>The layout will take this into account and use actual sizes when laying out." + 
+               "If you have boards which are exactly the nominal sizes  or you have rough (undressed) lumber which is as large as or larger than the nominal size, then untick this box and your parts will be layed out on the larger undressed board sizes.";
+var help16 = "In the real world, cutting pieces out of a board or a sheet consumes some wood because of the thickness of the blade used to cut it. With this option you can set the amount of wood wasted by cutting. Sometimes it can make the difference between a part fitting or not so it's important to take this into account.";
+var help17 = "If a part is too wide for a board, it will be split into equal widths based on the widest part available. If unchecked, then if the part is too wide to fit on any board, it will be left out of the layout.";
+var help18 = "If a part is too thick for any available board, then that part will be split into as many pieces as required to allow for a glue up to complete this part. If unchecked, then the part will be left out of the layout if there isn't a board thick enough";
+var help19 = "If parts cannot be placed on any available boards, then display the parts which were not placed.";
+var help20 = "These are the most nebulous of options. Normally you should leave these alone but for the adventurous these have been included. These two options represent two ways of deciding which open space a parts end up being placed in -  roughly described by the titles of the checkboxes." + 
+             "<br><br> Normally you should leave both on but you may try experimenting with the different combinations as sometimes one may work out to be more efficient than the other or may result in a placement which may be easier to cut out." +
+             " The rule names are only rough approximations to how the selection bias works and sometimes it may result in the opposite depending on your parts and your boards. I just gave them names because it was better than rule A or rule B or the description of what it actually does." + 
+             " Don't tell me it's not working if it doesn't result in a minimization or a better placement for cutting boards, it's just two parts to the selection process and it seems to work best in combination." +
+             " <br> Imagine a rule which said to always turn left if you got to a Stop sign. You could end up in Timbuktu or back to where you started from, depending on your starting point. It's kinda like that." +
+             " <br>You are dealing with an algorithm here which ended up being smarter than I am, so remember, use these to see if you can't go one better but YMMV.";
+var help21 = "Indicate whether the layout should pay attention to the material type or ignore it. If left unchecked, then material will be ignored and all parts will be placed on a generic 'default' material. If checked, then the layout will split parts into different materials and parts will only be placed on a board or sheet of material matching the material name of the part. You might leave this unchecked if you haven't paid much attention to setting material type and you just want to know how the parts would be laid out assuming they are all the same material."
+x = 20;
+y = 70;
+function setVisible(obj)
+{
+	obj = document.getElementById(obj);
+	obj.style.visibility = (obj.style.visibility == 'visible') ? 'hidden' : 'visible';
+}
+function placeIt(obj)
+{
+	obj = document.getElementById(obj);
+	if (document.documentElement)
+	{
+		theLeft = document.documentElement.scrollLeft;
+		theTop = document.documentElement.scrollTop;
+	}
+	else if (document.body)
+	{
+		theLeft = document.body.scrollLeft;
+		theTop = document.body.scrollTop;
+	}
+	theLeft += x;
+	theTop += y;
+	obj.style.left = theLeft + 'px' ;
+	obj.style.top = theTop + 'px' ;
+}
+
+
+/* Retrieve the boolean value from the cookie if it exists and set the initial value to the cookie value
+ * Otherwise just use the current value (default) and store that in a new cookie
+ */
+function initBooleanElementFromCookie(element) { 
+  //alert(document.cookie);
+  var storedValue=null;
+  storedValue=eatCookie(element);
+  if (storedValue == 'false' || storedValue == 'true' ) {
+    //alert("found cookie  value=" + storedValue);
+    newBooleanElementValue(element,storedValue);
+  }
+  else {
+    var value = "";
+    //alert(element);
+    value = document.getElementById(element).checked;
+    //alert(value);
+    if (value == true) {
+      newBooleanElementValue(element,'true');
+    }
+    else {
+      newBooleanElementValue(element,'false');
+    }
+  }
+}
+
+/* Retrieve the value from the cookie if it exists and set the initial value to the cookie value
+ * Otherwise just use the current value (default) and store that in a new cookie
+ */
+function initRadioElementFromCookie(element) { 
+  var storedValue1 = null;
+  var storedValue2 = null;
+  storedValue1 = eatCookie(element);
+  storedValue2 = eatCookie(element+"Tag");
+  if (storedValue1 != null && storedValue2 != null) {
+    //alert("element=" + element + "value1=" + storedValue1 + "value2=" + storedValue2);
+    newRadioElementValue(element,storedValue1,storedValue2);
+  }
+  else {
+    var radios = document.getElementById (element);
+    if (radios) {
+      var inputs = radios.getElementsByTagName ('input');
+      if (inputs) {
+        for (var i = 0; i < inputs.length; ++i) {
+          if (inputs[i].type == 'radio' && inputs[i].checked) {
+            value1 = inputs[i].value;
+            value2 = i;
+            newRadioElementValue(element,value1,value2);
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
+function initTextElementFromCookie(element) { 
+  var storedValue=null;
+  storedValue=eatCookie(element);
+  if (storedValue != null ) {
+      document.getElementById (element).value = storedValue;
+  }
+}
+
+function initSelectElementFromCookie(element) { 
+  var storedValue1 = null;
+  var storedValue2 = null;
+  storedValue1 = eatCookie(element);
+  storedValue2 = eatCookie(element+"Tag");
+  if (storedValue1 != null && storedValue2 != null) {
+    //alert("element=" + element + " value1=" + storedValue1 + " value2=" + storedValue2);
+    newSelectElementValue(element,storedValue1,storedValue2);
+  }
+  else
+  {
+    var selects = document.getElementById (element);
+    if (selects)
+    {
+      value1 = selects.value;
+      value2 = selects.selectedIndex;
+      newSelectElementValue(element,value1,value2);
+    }
+  }
+}
+
+/* set the value and store the value to the cookie
+ */
+function newBooleanElementValue( element, value ) {
+  if ( value == 'true' ) {
+    document.getElementById(element).checked = true;
+  }
+  else {
+    document.getElementById(element).checked = false;
+  }
+  //alert( "setting " + element + " to " + value);
+  //alert( "element value is" + document.getElementById(element).value) ;
+  //alert( "element checked is" + document.getElementById(element).checked) ;
+  bakeCookie(element,value,cookieExpiry);
+  //alert( document.cookie);
+}
+
+/* set the value and store the value in the cookie
+ */
+function newRadioElementValue( element, value1, value2 ) {
+  //alert( "setting " + element + " = " + value1 + value2);
+  var radios = document.getElementById (element);
+  if (radios) {
+    var inputs = radios.getElementsByTagName ('input');
+    if (inputs) {
+      document.getElementById (element).value = value1;
+      inputs[value2].checked = true ;
+    }
+  }
+  //alert( "element " + element + " = " + value1 + ":" + value2);
+  bakeCookie(element,value1,cookieExpiry);
+  bakeCookie(element+"Tag",value2,cookieExpiry);
+  //alert( document.cookie);
+}
+
+function newSelectElementValue( element, value1, value2 ) {
+  //alert( "setting " + element + " = " + value1 + value2);
+  var selects = document.getElementById (element);
+  if (selects)
+  {
+    selects.value = value1;
+    selects.selectedIndex = value2;
+    selects.options[value2].selected = true ;
+  }
+  //alert( "element " + element + " = " + value1 + ":" + value2);
+  bakeCookie(element,value1,cookieExpiry);
+  bakeCookie(element+"Tag",value2,cookieExpiry);
+  //alert( document.cookie);
+}
+
+function saveBooleanElementToCookie(element) {
+  var value = "";
+  value = document.getElementById(element).checked;
+  //alert(value);
+  bakeCookie(element,value,cookieExpiry);
+  //alert(document.cookie);
+}
+
+function saveRadioElementToCookie(element) {
+  var radios = document.getElementById (element);
+  if (radios) {
+    var inputs = radios.getElementsByTagName ('input');
+    if (inputs) {
+      for (var i = 0; i < inputs.length; ++i) {
+        if (inputs[i].type == 'radio' && inputs[i].checked) {
+          value1 = inputs[i].value;
+          value2 = i;
+        }
+      }
+    }
+  //alert("element=" + element + "value1=" + value1 + "value2=" + value2);
+  bakeCookie(element,value1,cookieExpiry);
+  bakeCookie(element + "Tag",value2,cookieExpiry);
+  //alert(document.cookie);
+  }
+}
+
+function saveSelectElementToCookie(element) {
+  var selects = document.getElementById (element);
+  if (selects)
+  {
+    value1 = selects.value;
+    value2 = selects.selectedIndex;
+    //alert("element=" + element + " value1=" + value1 + " value2=" + value2);
+    bakeCookie(element,value1,cookieExpiry);
+    bakeCookie(element + "Tag",value2,cookieExpiry);
+    //alert(document.cookie);
+  }
+}
+
+function saveTextElementToCookie(element) {
+  var value = document.getElementById(element).value;
+  bakeCookie(element,value,cookieExpiry);
+}
+
+function initBooleanElementValues()
+{ 
+  initBooleanElementFromCookie('nominalOut');
+  initBooleanElementFromCookie('linearFeet');
+  initBooleanElementFromCookie('outputFileUsed');
+  initBooleanElementFromCookie('clpFileUsed');
+  initBooleanElementFromCookie('printPage');
+  initBooleanElementFromCookie('outputFileUsed');
+  initBooleanElementFromCookie('comps');
+  initBooleanElementFromCookie('sheet');
+  initBooleanElementFromCookie('parts');
+  initBooleanElementFromCookie('forceBoardFeet');
+  initBooleanElementFromCookie('fourq');
+  initBooleanElementFromCookie('fiveq');
+  initBooleanElementFromCookie('sixq');
+  initBooleanElementFromCookie('eightq');
+  initBooleanElementFromCookie('tenq');
+  initBooleanElementFromCookie('layout');
+  initBooleanElementFromCookie('svgLayout');
+  initBooleanElementFromCookie('nominalWidth');
+  initBooleanElementFromCookie('splitWideParts');
+  initBooleanElementFromCookie('splitThickParts');
+  initBooleanElementFromCookie('layoutRuleA');
+  initBooleanElementFromCookie('layoutRuleB');
+  initBooleanElementFromCookie('displayUnplacedParts');
+  initBooleanElementFromCookie('layoutByMaterial');
+  initBooleanElementFromCookie('useSawKerf');
+  //alert( document.cookie);
+ } 
+ 
+function initRadioElementValues()
+{ 
+  initRadioElementFromCookie('compactListOption');
+  initRadioElementFromCookie('boardWidthOptions');
+  initRadioElementFromCookie('boardLengthOptions');
+  initRadioElementFromCookie('sheetWidthOptions');
+  initRadioElementFromCookie('sheetLengthOptions');
+  //alert( document.cookie);
+ } 
+  
+function initTextElementValues()
+{ 
+  initTextElementFromCookie('nominalMargin');
+  initTextElementFromCookie('partwords');
+  initTextElementFromCookie('sheetwords');
+  initTextElementFromCookie('sawKerfSize');
+ }
+ 
+function initSelectElementValues()
+{ 
+  initSelectElementFromCookie('sawKerfUnits');
+ } 
+  
+function saveBooleanElementValues()
+{ 
+  saveBooleanElementToCookie('nominalOut');
+  saveBooleanElementToCookie('linearFeet');
+  saveBooleanElementToCookie('outputFileUsed');
+  saveBooleanElementToCookie('clpFileUsed');
+  saveBooleanElementToCookie('printPage');
+  saveBooleanElementToCookie('outputFileUsed');
+  saveBooleanElementToCookie('comps');
+  saveBooleanElementToCookie('sheet');
+  saveBooleanElementToCookie('parts');
+  saveBooleanElementToCookie('forceBoardFeet');
+  saveBooleanElementToCookie('fourq');
+  saveBooleanElementToCookie('fiveq');
+  saveBooleanElementToCookie('sixq');
+  saveBooleanElementToCookie('eightq');
+  saveBooleanElementToCookie('tenq');
+  saveBooleanElementToCookie('layout');
+  saveBooleanElementToCookie('svgLayout');
+  saveBooleanElementToCookie('nominalWidth');
+  saveBooleanElementToCookie('splitWideParts');
+  saveBooleanElementToCookie('splitThickParts');
+  saveBooleanElementToCookie('layoutRuleA');
+  saveBooleanElementToCookie('layoutRuleB');
+  saveBooleanElementToCookie('displayUnplacedParts');
+  saveBooleanElementToCookie('layoutByMaterial');
+  saveBooleanElementToCookie('useSawKerf');
+}
+
+function saveRadioElementValues() { 
+  saveRadioElementToCookie('compactListOption');
+  saveRadioElementToCookie('boardWidthOptions');
+  saveRadioElementToCookie('boardLengthOptions');
+  saveRadioElementToCookie('sheetWidthOptions');
+  saveRadioElementToCookie('sheetLengthOptions');
+}
+
+function saveTextElementValues()
+{ 
+  saveTextElementToCookie('nominalMargin');
+  saveTextElementToCookie('partwords');
+  saveTextElementToCookie('sheetwords');
+  saveTextElementToCookie('sawKerfSize');
+ }
+ 
+function saveSelectElementValues()
+{ 
+  saveSelectElementToCookie('sawKerfUnits');
+ } 
+ 
+function selectCutListTableOption(selection)
+{
+  document.getElementById("compactListOption").value = selection;
+}
+
+function selectBoardWidthOption(selection)
+{
+  document.getElementById("boardWidthOptions").value = selection;
+}
+
+function selectBoardLengthOption(selection)
+{
+  document.getElementById("boardLengthOptions").value = selection;
+}
+
+function selectSheetWidthOption(selection)
+{
+  document.getElementById("sheetWidthOptions").value = selection;
+}
+
+function selectSheetLengthOption(selection)
+{
+  document.getElementById("sheetLengthOptions").value = selection;
+}
+
+function selectKerfSizeOption(selection)
+{
+  document.getElementById("kerfSize").value = selection;
+}
+
+function numbersOnly(myfield, event, dec)
+{
+  var key;
+  var keychar;
+
+  if (window.event)
+    key = window.event.keyCode;
+  else if (event)
+    key = event.which;
+  else
+    return true;
+  keychar = String.fromCharCode(key);
+
+// control keys
+  if ((key==null) || (key==0) || (key==8) || 
+      (key==9) || (key==13) || (key==27) )
+     return true;
+// numbers
+  else if ((("0123456789").indexOf(keychar) > -1))
+    return true;
+  else
+    return false;
+}
+  </script>
+</head>
+
+
+<body 
+ style="background: #ffffff none repeat scroll 0% 50%; -moz-background-clip: initial; -moz-background-origin: initial; -moz-background-inline-policy: initial; font-family: Verdana,Arial,Helvetica,sans-serif; font-size: 12px; direction: ltr;">
+<h1>
+<!--<center><img src="./images/cutlistTitle.jpg"></center> -->
+<center><img src="./images/CutList4.1-blue.png"></center>
+</h1>
+
+<div id="helpDiv" onClick="javascript:setVisible('helpDiv')" style="position: absolute;
+	visibility: hidden;
+	width: 400px;
+	height: 100px;
+	left: 20px;
+	top: 20px;
+	background-color: #ccc;
+	border: 1px solid #000;
+	padding: 10px; overflow:auto   ">
+</div>
+
+<div class="tabber" id="tablevel1"><!-- Main tabber start -->
+
+     <div class="tabbertab"><!-- Cut List tabbertab start -->
+	  <h2>CutList</h2>
+<div id="resultDiv" style="padding: 4px; background-color: #ECF0F3; overflow: auto; color: rgb(0, 0, 0);">
+<table border="0" cellpadding="2" cellspacing="2" width="" STYLE="table-layout:fixed;">
+  <tbody>
+    <tr>
+      <td align="right">Cutlist Output:</td>
+      <td><input id="printPage" name="printPage" value="printPage" checked="checked" type="checkbox">Web Page</td>
+      <td><input onclick="javascript:handleOutputFile(this,'outputFile');"  id="outputFileUsed" name="outputFileUsed" value="outputFileUsed" type="checkbox">CSV</td>
+      <td><input onclick="javascript:handleOutputFile(this,'clpFile');" id="clpFileUsed" name="clpFileUsed" value="clpFileUsed" type="checkbox">CutList Plus</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(1);"></td>
+    </tr>
+    <tr>
+      <td align="right">Layout Output:<br>
+      </td>
+      <td><input id="layout" name="layout" value="layout" checked  type="checkbox">Web Page</td>
+      <td><input id="svgLayout" name="svgLayout" value="svgLayout" type="checkbox">SVG</td>
+      <td><br></td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(10);"></td>
+    </tr>
+    <tr>
+      <td align="right">Include:</td>
+      <td><input id="comps" name="comps" value="comps" checked="checked" type="checkbox">Components</td>
+      <td><input id="sheet" name="sheet" value="sheet" checked="checked" type="checkbox">Sheet Goods</td>
+      <td><input id="parts" name="parts" value="parts" checked="checked" type="checkbox">Parts</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(2);"></td>
+    </tr>
+    <tr>
+      <td align="right">Tables :</td>
+      <td colspan="3">
+        <p id="compactListOption" >
+            <label><input name="compactList" value="compactList" checked onclick="selectCutListTableOption(this.value);" type="radio" >Compact</label>
+            <label><input name="compactList" value="listAll" type="radio" onclick="selectCutListTableOption(this.value);">By Sub-Assembly</label>
+            <label><input name="compactList" value="listAllSorted" type="radio" onclick="selectCutListTableOption(this.value);">Sorted by size</label></td>
+          </p>
+            <!--<input type="hidden" id="compactListOption"> -->
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(3);"></td>
+    </tr>
+    <tr>
+      <td align="right">Force Board Feet :</td>
+      <td><input id="forceBoardFeet" name="forceBoardFeet" value="forceBoardFeet" type="checkbox"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(6);"></td>
+    </tr>
+    <tr>
+      <td align="right">Part Words :</td>
+      <td colspan="3"><input id="partwords" name="partwords" size="50" maxlength="100" value="part hardware" type="text"></td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(4);"></td>
+    </tr>
+    <tr>
+      <td align="right">Sheet Material Words:</td>
+      <td colspan="3"><input id ="sheetwords" name="sheetwords" size="50" maxlength="100" value="sheet veneer plywood hardboard mdf" type="text"></td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(5);"></td>
+    </tr>
+    <tr>
+      <td align="right">&nbsp;</td>
+      <td colspan="3"><input id="linearFeet" name="linearFeet" value="linearFeet" checked="checked" type="hidden"><br></td>
+      <td align="right"><br></td>
+    </tr>
+  </tbody>
+</table>
+<input id="outputFile" name="outputFile" type="hidden">
+<input id="clpFile" name="clpFile" type="hidden">
+<br>
+</div><!-- end ResultDiv style -->
+</div><!-- *** Cut List tabbertab end***** --> 
+
+     <div class="tabbertab"><!-- Layout tabbertab start -->
+	  <h2>Layout</h2>
+<div id="result2Div" style="padding: 4px; background-color: #ECF0F3;  overflow: auto; color: rgb(0, 0, 0);">
+<table border="0" cellpadding="2" cellspacing="2" width="" STYLE="table-layout:fixed;">
+  <tbody>
+    <tr>
+      <td align="right">Split Wide Parts</td>
+      <td><input id="splitWideParts" name="splitWideParts" checked type="checkbox"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(17);"></td>
+    </tr>
+    <tr>
+      <td align="right">Split Thick Parts</td>
+      <td><input id="splitThickParts" name="splitThickParts" checked type="checkbox"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(18);"></td>
+    </tr>
+    <tr>
+      <td align="right">Layout By Material</td>
+      <td><input id="layoutByMaterial" name="layoutByMaterial"  type="checkbox"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(21);"></td>
+    </tr>    <tr>
+      <td align="right">Display unplaced parts</td>
+      <td><input id="displayUnplacedParts" name="displayUnplacedParts" checked type="checkbox"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(19);"></td>
+    </tr>
+    <tr>
+      <td align="right">Layout rules</td>
+      <td colspan="3">
+           <input id="layoutRuleA" name="layoutRuleA" checked type="checkbox">Minimize waste &nbsp; 
+           <input id="layoutRuleB" name="layoutRuleB" checked type="checkbox">Line up parts to cut lines</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(20);"></td>
+    </tr>
+    <tr>
+      <td align="right">Saw kerf</td>
+      <td colspan="3">
+          <input id="useSawKerf" name="useSawKerf" checked type="checkbox">&nbsp;
+	  Saw Kerf Size:&nbsp;
+          <input id="sawKerfSize" name="sawKerfSize" size=2 maxlength=2 type="text" onKeyPress="return numbersOnly(this, event)">&nbspx&nbsp; 
+	  <select id="sawKerfUnits" name="sawKerfUnits">
+	    <option id="32nd" value="32nd">1&frasl;32"</option>
+	    <option id="16th" value="16th">1&frasl;16"</option>
+	    <option id="8th" value="8th" selected >1&frasl;8"</option>
+	    <option id="4th" value="4th">1&frasl;4"</option>
+	    <option id="mm" value="mm">mm</option>
+	  </select>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(16);"></td>
+    </tr>
+    <tr>
+ <!--     <td align="right">Saw kerf size</td>
+      <td colspan="3">
+           <input name="sawKerfSize" value="0sixteenth" checked onclick="selectKerfSizeOption(this.value);" type="radio" >0 (ignore) &nbsp;
+           <input name="sawKerfSize" value="2sixteenth" onclick="selectKerfSizeOption(this.value);" type="radio" >1/8" (thin kerf) &nbsp;
+           <input name="sawKerfSize" value="3sixteenth" onclick="selectKerfSizeOption(this.value);" type="radio" >3/16"</td>  -->
+           <input type="hidden" id="kerfSize">
+<!--      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(16);"></td> -->
+    </tr>
+  </tbody>
+</table>
+</div><!-- end Result2Div style -->
+     
+     
+     <div class="tabber" id="tablevel2"><!-- Nested tabber start-->
+     <div class="tabbertab"><!-- Nested Boards tabbertab start -->
+	  <h3>Boards</h3>
+<div id="result3Div" style="padding: 4px; background-color: #ECF0F3;  overflow: auto; color: rgb(0, 0, 0);">
+<table border="0" cellpadding="2" cellspacing="2" width="" STYLE="table-layout:fixed;">
+  <tbody>
+    <tr>
+      <td align="right">Use nominal sizes :</td>
+      <td colspan="3"><input id="fourq" name="fourq" value="fourq" type="checkbox">4/4 &nbsp; <input id="fiveq" name="fiveq"
+          value="fiveq" type="checkbox">5/4 &nbsp; <input id="sixq" name="sixq"
+          value="sixq" type="checkbox">6/4 &nbsp; <input id="eightq" name="eightq" value="eightq" type="checkbox">8/4
+          &nbsp; <input id="tenq" name="tenq" value="tenq" type="checkbox">10/4</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(7);"></td>
+    </tr>
+    <tr>
+      <td align="right">Output nominal thickness :</td>
+      <td><input id="nominalOut" name="nominalOut" type="checkbox"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(8);"></td>
+    </tr>
+    <tr>
+      <td align="right">Nominal thickness margin (1/16s):</td>
+      <td><input id="nominalMargin" name="nominalMargin" size="4" maxlength="1" value="3" type="text" onKeyPress="return numbersOnly(this, event)"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(9);"></td>
+    </tr>
+    <tr>
+      <td align="right">Nominal Board Width</td>
+      <td colspan="3">
+        <p  id="boardWidthOptions">
+           <label><input name="boardWidthOption" value="board4w" onclick="selectBoardWidthOption(this.value);" type="radio">4"(100mm)</label>
+           <label><input name="boardWidthOption" value="board6w" checked onclick="selectBoardWidthOption(this.value);" type="radio">6"(150mm) </label>
+           <label><input name="boardWidthOption" value="board8w" onclick="selectBoardWidthOption(this.value);" type="radio">8"(200mm)</label>
+           <label><input name="boardWidthOption" value="board10w" onclick="selectBoardWidthOption(this.value);" type="radio">10"(250mm)</label>
+           <label><input name="boardWidthOption" value="board12w" onclick="selectBoardWidthOption(this.value);" type="radio">12"(300mm)</label></td>
+        </p>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(11);"></td>
+    </tr>
+    <tr>
+      <td align="right">Use Dressed Board Widths for Layout</td>
+      <td><input id="nominalWidth" name="nominalWidth" checked type="checkbox"></td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(15);"></td>
+    </tr>
+    <tr>
+      <td align="right">Board Length</td>
+      <td colspan="3">
+        <p id="boardLengthOptions">
+           <label><input name="boardLengthOption" value="board2l" onclick="selectBoardLengthOption(this.value);" type="radio">2'(600mm)</label>
+           <label><input name="boardLengthOption" value="board4l" onclick="selectBoardLengthOption(this.value);" type="radio">4'(1.22m)</label>
+           <label><input name="boardLengthOption" value="board6l" onclick="selectBoardLengthOption(this.value);" type="radio">6'(1.8m) </label>
+           <label><input name="boardLengthOption" value="board8l" checked onclick="selectBoardLengthOption(this.value);" type="radio">8'(2.4m)</label>
+           <label><input name="boardLengthOption" value="board10l"  onclick="selectBoardLengthOption(this.value);" type="radio">10'(3.2m) </label>
+           <label><input name="boardLengthOption" value="board12l" onclick="selectBoardLengthOption(this.value);" type="radio">12'(3.6m)</label></td>
+        </p>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(12);"></td>
+    </tr>
+  </tbody>
+</table>
+</div><!-- end Result3Div style -->
+</div><!-- *** nested Boards tabbertab end***** --> 
+
+<div class="tabbertab"><!-- Nested Sheets tabbertab start -->
+<h3>Sheets</h3>
+<div id="result4Div" style="padding: 4px; background-color: #ECF0F3;  overflow: auto; color: rgb(0, 0, 0);">
+<table border="0" cellpadding="2" cellspacing="2" width="" STYLE="table-layout:fixed;">
+  <tbody>
+    <tr>
+      <td align="right">Sheet Widths</td>
+      <td colspan="3">
+        <p id="sheetWidthOptions">
+           <label><input name="sheetWidthOption" value="sheet2w" onclick="selectSheetWidthOption(this.value);" type="radio">2' (610mm)</label>
+           <label><input name="sheetWidthOption" value="sheet4w" checked onclick="selectSheetWidthOption(this.value);" type="radio">4' (1220mm)</label>
+           <label><input name="sheetWidthOption" value="sheet5w" onclick="selectSheetWidthOption(this.value);" type="radio">5' (1524mm)</label></td>
+        </p>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(13);"></td>
+    </tr>
+    <tr>
+      <td align="right">Sheet Lengths</td>
+      <td colspan="3">
+        <p id="sheetLengthOptions">
+           <label><input name="sheetLengthOption" value="sheet2l" onclick="selectSheetLengthOption(this.value);" type="radio">2'(610mm)</label>
+           <label><input name="sheetLengthOption" value="sheet4l" onclick="selectSheetLengthOption(this.value);" type="radio">4'(1220mm)</label>
+           <label><input name="sheetLengthOption" value="sheet5l" onclick="selectSheetLengthOption(this.value);" type="radio">5'(1524mm)</label>
+           <label><input name="sheetLengthOption" value="sheet8l" checked onclick="selectSheetLengthOption(this.value);" type="radio">8'(2440mm)</label> </td>
+        </p>
+      <td align="right"><img src="./images/help.gif" onclick="javascript:handleHelp(14);"></td>
+    </tr>
+  </tbody>
+</table>
+</div><!-- end Result4Div style -->
+</div><!-- *** nested Sheets tabbertab end***** --> 
+<br>
+</div><!-- *** nested tabber end***** --> 
+</div><!-- *** Layout tabbertab end*****-->
+</div><!-- *** Main tabber end***** -->
+
+<!-- Put buttons along the bottom  independent of the tab being displayed --><br>
+<table border="0" cellpadding="2" cellspacing="0" width="200">
+  <tbody>
+    <tr>
+      <td><input name="" value="Run" onclick="javascript:handleRun();" type="button"></td>
+      <td><input name="" value="Close" onclick="javascript:handleClose();" type="button"></td>
+      <!--<td><input name="" value="Load" onclick="javascript:initBooleanElementValues();" type="button"></td>  -->
+      <td><input name="" value="Save Settings" onclick="javascript:handleSaveConfig();" type="button"></td>
+      <td><input name="" value="Help" onclick="javascript:handleHelp(0)" type="button"></td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+<!-- initialise table options since having it set checked doesn't seem to initialize the value field the same as an onclick event-->
+initRadioElementValues();
+<!--selectCutListTableOption("compactList"); -->
+//selectBoardWidthOption("board6w");
+//selectBoardLengthOption("board8l");
+//selectSheetWidthOption("sheet4w");
+//selectSheetLengthOption("sheet8l");
+selectKerfSizeOption("0sixteenth");
+initBooleanElementValues();
+initTextElementValues();
+initSelectElementValues();
+
+</script>
+
+<!-- body end -->
+</body>
+</html>

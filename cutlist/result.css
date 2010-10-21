@@ -1,0 +1,7 @@
+body {overflow: auto; font-family:Verdana, Arial, Helvetica, sans-serif; font-size:12px; background : #ffffff;}
+div.result {visibility: hidden; overflow : auto; background-color: #d4d4bf; color : #000000; padding : 4px;}
+div.layout {position: relative; visibility: visible; overflow : auto; background-color: #d4d4bf;  color : #000000; padding : 4px; }
+div.graphicPrint {visibility:hidden; display:none;}
+div.graphicScreen{
+    visibility:visible;
+    display: block;}
