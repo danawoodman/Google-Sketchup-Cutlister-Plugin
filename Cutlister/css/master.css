@@ -1,0 +1,273 @@
+/* -----------------------------------------------------------------------------
+    Eric Meyer Reset
+    http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
+----------------------------------------------------------------------------- */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    font-family: inherit;
+    vertical-align: baseline;
+}
+/* remember to define focus styles! */
+:focus {
+    outline: 0;
+}
+body {
+    line-height: 1;
+    color: black;
+    background: white;
+}
+ol, ul {
+    list-style: none;
+}
+/* tables still need 'cellspacing="0"' in the markup */
+table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+caption, th, td {
+    text-align: left;
+    font-weight: normal;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content: "";
+}
+blockquote, q {
+    quotes: "" "";
+}
+
+
+/* -----------------------------------------------------------------------------
+    HTML
+----------------------------------------------------------------------------- */
+
+body {
+    color: #353535;
+    font: .9em "Helvetica Neue",Helvetica,Arial,sans-serif;
+    padding: 10px;
+    position: relative;
+    text-align: center;
+}
+
+p {
+    line-height: 1.3em;
+    margin: 1.5em 0;
+}
+
+a {
+    color: #000;
+    border-bottom: 1px solid #ccc;
+    text-decoration: none;
+}
+a:hover {
+    color: #E34C00;
+    border-bottom: 3px solid #E34C00;
+    text-decoration: none;
+}
+
+b, strong {
+    color: #000;
+    font-weight: bold;
+}
+i, em {
+    color: #000;
+    font-style: italic;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Lucida Sans",Lucida,Verdana,sans-serif;
+}
+h1 {
+    color: #000;
+    font-size: 2.2em;
+    margin: 0 0 .5em 0;
+}
+h2 {
+    color: #000;
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0 0 .5em 0;
+}
+h3 {
+    color: #E34C00;
+    font-size: 1.3em;
+    margin: 2.5em 0 .5em 0;
+}
+h4 {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 2em 0 0 0;
+}
+
+ul {
+    list-style: disc;
+    margin: 0 0 0 2em;
+}
+ol {
+    list-style: decimal;
+}
+li {
+    margin: .3em 0;
+}
+
+pre, 
+code, 
+kbd {
+    background: #C5E3EB;
+    font-family: monospace;
+    font-size: 1.1em;
+    padding: 2px 4px;
+}
+pre {
+    border-left: 4px solid #4FBEE1;
+    margin: 1em 0 1em 0;
+    padding: 1em 3em;
+}
+    pre code {
+        background: none;
+        display: block;
+        margin: 0;
+    }
+
+q, blockquote {
+    background: #F8F8F8;
+    font-style: italic;
+}
+blockquote {
+    margin: 1em 0 1em 2em;
+}
+    blockquote p {
+        border-left: 5px solid #E3E3E3;
+        padding: 8px 18px;
+    }
+
+abbr {
+    border-bottom: 1px dotted #999;
+    cursor: help;
+}
+    abbr:hover {
+        border-bottom: 1px dotted #000;
+        cursor: help;
+    }
+
+
+/* -----------------------------------------------------------------------------
+    LAYOUT
+----------------------------------------------------------------------------- */
+
+#container {
+    background: #F2F2F2;
+    border: 1px solid #C6C6C6;
+    border-radius: 4px;
+    padding: 20px 40px;
+    text-align: left;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+
+/* -----------------------------------------------------------------------------
+    PAGE ELEMENTS
+----------------------------------------------------------------------------- */
+
+.button {
+    background: #8CB02A;
+    border: 1px solid #5A7334;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 1.1em;
+    padding: 6px 15px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+    .button:hover {
+        background: #52780A;
+        border-color: #3F5000;
+        color: #fff;
+        cursor: pointer;
+    }
+    .button.grayed {
+        background: #E1E1E1;
+        border-color: #8F8F8F;
+        color: #6E6E6E;
+    }
+    .button.grayed:hover {
+        background: #CBCBCB;
+        border-color: #808080;
+        color: #606060;
+    }
+
+/* HTML form rows. */
+.form-row {
+    clear: both;
+    display: block;
+    margin: 15px 0;
+}
+    .form-row:after {
+        clear: both;
+        content: '&nbsp;';
+        display: block;
+        font-size: 0;
+        line-height: 0;
+        visibility: hidden;
+        width: 0;
+        height: 0;
+    }
+    .form-row label {
+        display: block;
+        float: left;
+        font-weight: bold;
+        margin-right: 20px;
+        width: 100px;
+    }
+    .form-row label.block-label { /* Block level labels */
+        float: none;
+        margin: 10px 0 5px;
+        width: auto;
+    }
+    .form-row-block { /* Holds nested items like checkboxes */
+        margin-left: 120px; /* Label width + margin */
+    }
+    .form-row-block label { /* Override the rules for labels */
+        display: inline;
+        float: none;
+        margin-right: 0;
+        width: auto;
+    }
+
+#notice-area {
+    background: #F6FFD7;
+    border-bottom: 1px solid #C8D8B7;
+    color: #7B8904;
+    display: none;
+    font-size: 1.2em;
+    left: 0;
+    padding: 20px 0;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+	
+}
+    #notice-area p {
+        margin: 0;
+    }
+
+/* ui.html form contents. */
+#id_solid_materials,
+#id_sheet_materials {
+    width: 99%;
+}

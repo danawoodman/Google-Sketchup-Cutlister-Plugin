@@ -1,0 +1,45 @@
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin: 0;
+}
+
+/* Format the labels for printing. */
+.label {
+    height: 16.9mm;
+    text-align: center;
+    width: 87.3mm;
+}
+    .label h4 {
+        font-size: 6mm;
+        font-weight: bold;
+        margin: 2mm 0;
+    }
+    .job-name {
+        margin-right: 10mm;
+    }
+    .cabinet-name {
+        
+    }
+    .part-thickness {
+        
+    }
+    .part-material {
+        
+    }
+    .part-name {
+        float: left;
+        font-weight: bold;
+    }
+    .part-size {
+        float: right;
+    }
+    .label p {
+        clear: both;
+        font-size: 4.9mm;
+        margin: 2mm 0;
+    }
+    
+/* Hide the print toolbar. */
+.page-tools {
+    display: none;
+}
