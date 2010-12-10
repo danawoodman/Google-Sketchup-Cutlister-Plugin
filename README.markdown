@@ -19,7 +19,7 @@ This plugin was designed to be extendable, allowing you to add your own output f
 
 ## Installation
 
-Copy the file `[Cutlister][].rb` file and the `[Cutlister][]` directory into your SketchUp plugin directory:
+Copy the file `Cutlister.rb` file and the `Cutlister` directory into your SketchUp plugin directory:
 
 On a **Mac** it is usually here:
 
@@ -83,11 +83,13 @@ It was completely re-written from the ground up and uses only a few parts of the
 
 ## Notes & Caveats
 
+This plugin is currently under heavy development and is not usable yet, please 
+
 One major note is that **[Cutlister][] does not do "layouts"** currently. The original [CutList][] has support for something called "layout" which allows you to output your cut list as a printable panel layout that you can use to visualize how your parts will fit on a sheet of plywood or other material.
 
-Since [Cutlister][] was completely re-written, it must be build from the ground up, and the layout feature has not yet been integrated.
+Since [Cutlister][] was completely re-written, it must be built from the ground up, and the layout feature has not yet been integrated.
 
-I am planning on implementing the layout features as soon as the cut listing parts are stable. If you want to contribute, please visit
+I am planning on implementing the layout features as soon as the cut listing parts are stable and I have determined the best way to implement the feature so that it is flexible for multiple uses.
 
 
 ## Contributing, Feedback & Bug Reports
