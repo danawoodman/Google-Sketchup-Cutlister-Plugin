@@ -52,18 +52,36 @@ Give the individual parts a material fill (e.g. "PF-MAPLE", "MDF", "Poplar". etc
 
 Once your models is setup, you can begin to cut list.
 
-Once you have the [Cutlister][] popup menu open, set your options
+Once you have the [Cutlister][] popup menu open, set your options and then click "Export" to generate your cut list.
 
+You can choose the **Format** of the export, which will output the cut list into different formats. Currently there are there choices:
+
+* **Web Page** -- Opens a web browser window for printing.
+* **CSV** -- Creates a `.csv` file in the same directory as your drawing, which you can then use in Excel or another similar program.
+* **Label** -- Which opens a web browser window for printing labels for your parts. Note that you must select the *List Type* "Label (Avery 5366)" for this to work right (or create your own label List Type).
+
+Next, you can select the **List Type** you want to export which controls how the data is structured in the cut list:
+
+* **Batched** -- Outputs a cut list of the parts grouped first by *Sheet Goods*/*Solid Stock*/*Hardware*, then within those sections it is grouped by *Material*, then finally by the *Thickness*. This is generally used for batched cutting of parts for cabinets.
+* **Individual** -- Outputs the the cut list based on the *Cabinet Name* (aka the Sub Assembly). This is generally used when assembling cabinets.
+* **Full** -- This exports everything, ungrouped. This is rarely used but provided in case you just want all the parts in one big list.
+* **Label (Avery 5366)** -- Outputs parts onto sticky labels (that fit on an Avery 5366 template sheet). Note that you must select the *Label* format from the "Formats" select box for this to work.
+
+You can choose to **Show** only *Sheet Goods*, *Solid Stock*, *Hardware* or any combination of them.
+
+The **Sheet Goods** list is a comma separated list of material names that match materials in your model. If the material name is in this list, it will be grouped as a *Sheet Good* part. The field is case-insensitive, meaning if you input "mdf", it would match any material in your model named "mdf", "MDF", "mDf", or any combination of capital letters. This field also allows you to have materials that contain spaces (e.g. "Shop Ply", "Pre-finish Maple", etc...).
+
+The **Solid Stock** list is the same as the *Sheet Goods* list above, but it instead labels parts as *Solid Stock*. The same rules apply for items in the list.
 
 ## Extending [Cutlister][]
 
-[Cutlister][] is designed to be extensible. This means that you can create new output formats and cut list layouts based on your needs. 
+[Cutlister][] is designed to be extensible. This means that you can create new renderers, output formats and cut lists based on your needs. 
 
 If you wanted to export an XML file, for example, you could create a sub-class of the `Renderer`class (which is found in `renderers.rb`)  to construct your XML file and then create a sub-class of the `Cutlist` class (in `cutlist.rb`) to format the cut list output to work with XML.
 
-Once you sub-class `Renderer` or `Cutlist`, your custom renderer/cutlist will show up in the popup menu
+Once you sub-class `Renderer` or `Cutlist`, your custom renderer/cutlist will show up in the "Format" and "List Type" select boxes in the UI (once you restart SketchUp).
 
-See the file `extensions` folder for an example of how to do this.
+See the file `Cutlister/extensions/` folder for an example of how to do this.
 
 
 ## Credits
@@ -73,9 +91,13 @@ See the file `extensions` folder for an example of how to do this.
 * [Steve Racz](http://steveracz.com/)
 * Dave Richards
 
-It was completely re-written from the ground up and uses only a few parts of the original code. The main differences of [Cutlister][] from CutList are as follows:
+It was completely re-written from the ground up and uses only a few parts of the original code. 
+
+A few differences of [Cutlister][] from [CutList][] are as follows:
 
 * **More Easily Extendable** -- Adding new output formats or cut list types are much more streamlined, with automatic sub-class "sniffing", which means that if you sub-class `Renderer` or `Cutlist` the plug-in automatically adds the new sub-class to the list of formats and list types. To add a new output format or cut list all you need to do is create a sub-class of the parent class and define how it should work, everything else is taken care of.
+
+    See the `Cutlister/extension/` folder for an example of how to do this. When adding a new extension, make sure to load them in the `Cutlister.rb` file and restart SketchUp so they work.
 * **Improved User Interface** -- The design for the plugin was cleaned up and improved to be easier to use and more attractive as well as more easily modifiable. The interface has automatic notification messages built in, rather than the somewhat annoying pop-up messages.
 * **Version Controlled and Open Source** -- The plugin is [hosted on Github](https://github.com/danawoodman/Google-Sketchup-[Cutlister][]-Plugin) and is released under a MIT license (see the `LICENSE` file for more information on the license). This means you can fork it, modify the code and use it in any manner you please.
 * **Lots of Code Comments** -- Where possible I provided comments on the code as to what is going on so modification and understanding of the code is improved. I will also make my best attempt at keeping a good tutorial and reference page maintained so extending this plug-in will be as straight forward as possible.
@@ -83,7 +105,7 @@ It was completely re-written from the ground up and uses only a few parts of the
 
 ## Notes & Caveats
 
-This plugin is currently under heavy development and is not usable yet, please 
+This plugin is currently under heavy development and is not usable yet, please bookmark this plugin and come back to check up on it's status. This `README` will be kept up to date to reflect changes.
 
 One major note is that **[Cutlister][] does not do "layouts"** currently. The original [CutList][] has support for something called "layout" which allows you to output your cut list as a printable panel layout that you can use to visualize how your parts will fit on a sheet of plywood or other material.
 
