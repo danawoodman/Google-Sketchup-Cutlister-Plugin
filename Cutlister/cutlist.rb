@@ -25,10 +25,10 @@ class Cutlist
     @options = options
     @title = title()
     
-    puts "@model: #{@model}" if $debug
-    puts "@renderer: #{@renderer}" if $debug
-    puts "@parts: #{@parts}" if $debug
-    puts "@options: #{@options}" if $debug
+    puts "[Cutlist.initialize] @model: #{@model}" if $debug
+    puts "[Cutlist.initialize] @renderer: #{@renderer}" if $debug
+    puts "[Cutlist.initialize] @parts: #{@parts}" if $debug
+    puts "[Cutlist.initialize] @options: #{@options}" if $debug
     
   end
   
@@ -51,7 +51,7 @@ class Cutlist
     
     title = "Cutlist for: #{@model.title}"
     
-    puts "title: #{title}" if $debug
+    puts "[Cutlist.title]: #{title}" if $debug
     
     title
     
@@ -65,7 +65,7 @@ class Cutlist
     
     heading = @renderer.heading(title, opts)
     
-    puts "heading: #{heading}" if $debug
+    puts "[Cutlist.heading]: #{heading}" if $debug
     
     heading
     
@@ -76,7 +76,7 @@ class Cutlist
     
     page_title = @renderer.title title()
     
-    puts "page_title: #{page_title}" if $debug
+    puts "[Cutlist.page_title]: #{page_title}" if $debug
     
     page_title
     
@@ -126,6 +126,8 @@ class Cutlist
   # If you want a different format, over-ride this class in your sub-class.
   def build
     
+    puts "[Cutlist.build] Building cutlist..." if $debug
+    
     data = heading().to_s
     
     data += page_title().to_s
@@ -133,27 +135,39 @@ class Cutlist
     # Show sheet goods section.
     if @options["show_sheets"]
       
-      data += section_heading("Sheet Goods").to_s
-      data += rows(@parts.sheets).to_s
-      data += section_footer(@parts.sheets).to_s
+      if @parts.sheets != nil
+
+        data += section_heading("Sheet Goods").to_s
+        data += rows(@parts.sheets).to_s
+        data += section_footer(@parts.sheets).to_s
+        
+      end
       
     end
     
     # Show solid stock section.
     if @options["show_solids"]
       
-      data += section_heading("Solid Stock").to_s
-      data += rows(@parts.solids).to_s
-      data += section_footer(@parts.solids).to_s
+      if @parts.solids != nil
+        
+        data += section_heading("Solid Stock").to_s
+        data += rows(@parts.solids).to_s
+        data += section_footer(@parts.solids).to_s
+        
+      end
     
     end
     
     # Show hardware section.
     if @options["show_hardware"]
       
-      data += section_heading("Hardware").to_s
-      data += rows(@parts.hardware).to_s
-      data += section_footer(@parts.hardware).to_s
+      if @parts.hardware != nil
+        
+        data += section_heading("Hardware").to_s
+        data += rows(@parts.hardware).to_s
+        data += section_footer(@parts.hardware).to_s
+        
+      end
     
     end
     

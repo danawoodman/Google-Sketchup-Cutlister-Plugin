@@ -13,14 +13,14 @@
 require 'sketchup.rb'
 
 # Toggle whether debugging is on or off ("true" means on, "false" means off).
-$debug = true
+$debug = false
 
-puts "Debugging is on." if $debug
+puts "[Cutlister.rb] Debugging is on." if $debug
 
 # Define globals.
 $version = "1.0 beta"
 
-puts "Version of Cutlister is: #{$version}" if $debug
+puts "[Cutlister.rb] Version of Cutlister is: #{$version}" if $debug
 
 # Load all the application files.
 load 'Cutlister/utils.rb'

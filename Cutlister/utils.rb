@@ -46,25 +46,142 @@ end
   
 # Extends class Float to provide rounding to x digits
 class Float
-  def round_to(x)
-    (self * 10**x).round.to_f / 10**x
+  
+  # def round_to(x)
+  #   (self * 10**x).round.to_f / 10**x
+  # end
+  
+  # def to_inch(html = false)
+  #   
+  #  if html
+  #    
+  #    self.to_html_fraction(self)
+  #    
+  #  else
+  #    
+  #    self.to_fraction(self)
+  #   
+  #  end
+  #   
+  # end
+  
+  def to_fraction
+    
+    fraction = case self.abs % 1.0
+      
+      when 0 then ''  # No fraction...
+      
+      when 1.0 / 2 then '1/2'  # One half
+      
+      when 1.0 / 4 then '1/4'  # One quarter
+      when 3.0 / 4 then '3/4'  # Three quarters
+    
+      when 1.0 / 3 then '1/3'  # One third
+      when 2.0 / 3 then '2/3'  # Two thirds
+      
+      when 1.0 / 5 then '1/5'  # One fifth
+      when 2.0 / 5 then '2/5'  # Two fifths
+      when 3.0 / 5 then '3/5'  # Three fifths
+      when 4.0 / 5 then '4/5'  # Four fifths
+
+      when 1.0 / 6 then '1/6'  # One sixth
+      when 5.0 / 6 then '5/6'  # Five sixths
+
+      when 1.0 / 8 then '1/8'  # One eighth
+      when 3.0 / 8 then '3/8'  # Three eighths
+      when 5.0 / 8 then '5/8'  # Five eighths
+      when 7.0 / 8 then '7/8'  # Seven eighths
+
+      when 1.0 / 16 then '1/16'  # One sixteenth
+      when 3.0 / 16 then '3/16'  # Three sixteenths
+      when 5.0 / 16 then '5/16'  # Five sixteenths
+      when 7.0 / 16 then '7/16'  # Seven sixteenths
+      when 9.0 / 16 then '9/16'  # Nine sixteenths
+      when 11.0 / 16 then '11/16'  # Eleven sixteenths
+      when 13.0 / 16 then '13/16'  # Thirteen sixteenths
+      when 15.0 / 16 then '15/16'  # Seventeen sixteenths
+        
+    end
+    
+    if fraction
+      
+      body = case self.floor
+      when -1 then '-'
+      when  0 then ''
+      else self.to_i.to_s
+      end
+      "#{body} #{fraction}"
+      
+    else
+      
+      "~ #{self.to_s}"
+      
+    end
+    
   end
+  
+  def to_html_fraction
+    
+    fraction = case self.abs % 1.0
+      
+      when 0 then ''  # No fraction...
+      
+      when 1.0 / 2 then '&frac12;'  # One half
+      
+      when 1.0 / 4 then '&frac14;'  # One quarter
+      when 3.0 / 4 then '&frac34;'  # Three quarters
+    
+      when 1.0 / 3 then '&#x2153;'  # One third
+      when 2.0 / 3 then '&#x2154;'  # Two thirds
+      
+      when 1.0 / 5 then '&#x2155;'  # One fifth
+      when 2.0 / 5 then '&#x2156;'  # Two fifths
+      when 3.0 / 5 then '&#x2157;'  # Three fifths
+      when 4.0 / 5 then '&#x2158;'  # Four fifths
+
+      when 1.0 / 6 then '&#x2159;'  # One sixth
+      when 5.0 / 6 then '&#x215A;'  # Five sixths
+
+      when 1.0 / 8 then '&#x215B;'  # One eighth
+      when 3.0 / 8 then '&#x215C;'  # Three eighths
+      when 5.0 / 8 then '&#x215D;'  # Five eighths
+      when 7.0 / 8 then '&#x215E;'  # Seven eighths
+
+      when 1.0 / 16 then '<sup>1</sup>&frasl;<sub>16</sub>'  # One sixteenth
+      when 3.0 / 16 then '<sup>3</sup>&frasl;<sub>16</sub>'  # Three sixteenths
+      when 5.0 / 16 then '<sup>5</sup>&frasl;<sub>16</sub>'  # Five sixteenths
+      when 7.0 / 16 then '<sup>7</sup>&frasl;<sub>16</sub>'  # Seven sixteenths
+      when 9.0 / 16 then '<sup>9</sup>&frasl;<sub>16</sub>'  # Nine sixteenths
+      when 11.0 / 16 then '<sup>11</sup>&frasl;<sub>16</sub>'  # Eleven sixteenths
+      when 13.0 / 16 then '<sup>13</sup>&frasl;<sub>16</sub>'  # Thirteen sixteenths
+      when 15.0 / 16 then '<sup>15</sup>&frasl;<sub>16</sub>'  # Seventeen sixteenths
+        
+    end
+    
+    if fraction
+      
+      body = case self.floor
+        when -1 then '-'
+        when  0 then ''
+        else self.to_i.to_s
+      end
+      
+      "#{body} #{fraction}"
+      
+    else
+      
+      "~ #{self.to_s}"
+      
+    end
+    
+  end
+  
 end
 
 # Extend class String to be able to convert the string to an html compliant string
 # as well as some manipulations required for CutList Plus compatibility and other string
 # filters.
 class String
-  
-  def to_inch
-    
-    # TODO: Convert a string to inch dimensions (including fractions).
-    val = self # Take the decimals and convert to a fraction.
-    val = "#{val}\""
-    
-    val
-    
-  end
   
   # This will html-ise a string so that we don't have problems displaying in html
   # returns a copy of the string with problematic characters replaced by escape sequences.

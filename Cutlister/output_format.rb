@@ -22,7 +22,7 @@ class OutputFormat
     
     model_path = @model.path
     
-    puts "Model path: #{model_path}"
+    puts "[OutputFormat.initialize] Model path: #{model_path}" if $debug
     
     if model_path == ""
       
@@ -126,7 +126,7 @@ class FileOutputFormat < OutputFormat
     
     @full_file_name = "#{@model_path}/#{@model_name}_#{@file_suffix}"
     
-    puts "Opening file: #{@full_file_name}" if $debug
+    puts "[FileOutputFormat.open_files] Opening file: #{@full_file_name}" if $debug
     
     @file = File.new(@full_file_name, "w")
     
@@ -140,7 +140,7 @@ class FileOutputFormat < OutputFormat
 
   def close_files
     
-    puts "Closing files..." if $debug
+    puts "[FileOutputFormat.close_files] Closing files..." if $debug
     
     @file.close
     
@@ -148,7 +148,7 @@ class FileOutputFormat < OutputFormat
   
   def display_results
     
-    puts "Displaying results..." if $debug
+    puts "[FileOutputFormat.display_results] Displaying results..." if $debug
     
     # TODO: Have an alert in the UI letting them know it was a success. Would 
     # be nice to also have the the file be linked to or auto opened...

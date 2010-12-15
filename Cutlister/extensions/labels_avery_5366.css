@@ -1,21 +1,27 @@
 body {
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font: 9pt "Helvetica Neue",Helvetica,Arial,sans-serif;
     margin: 0;
+    padding: 0;
 }
 
 /* Format the labels for printing. */
 .label {
     height: 16.9mm;
-    text-align: center;
+/*     text-align: center; */
+    margin: .125in 0;
     width: 87.3mm;
 }
     .label h4 {
-        font-size: 6mm;
+        font-size: 11pt;
         font-weight: bold;
-        margin: 2mm 0;
+        margin: .125in 0;
+    }
+    .label p {
+        margin: .125in 0;
+        padding: 0;
     }
     .job-name {
-        margin-right: 10mm;
+/*         margin-right: .125in; */
     }
     .cabinet-name {
         
@@ -27,16 +33,11 @@ body {
         
     }
     .part-name {
-        float: left;
-        font-weight: bold;
+/*         float: left; */
+/*         font-weight: bold; */
     }
     .part-size {
-        float: right;
-    }
-    .label p {
-        clear: both;
-        font-size: 4.9mm;
-        margin: 2mm 0;
+/*         float: right; */
     }
     
 /* Hide the print toolbar. */

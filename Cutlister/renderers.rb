@@ -74,93 +74,6 @@ class Renderer
 end
 
 
-# Exports the cut list into a Comma Seperated Values (CSV) file, which will
-# work in programs like Mircosoft Excel (PC/Mac) and Apple iWork Numbers (Mac).
-class CSVRenderer < Renderer
-  
-  @display_name = "CSV"
-  @description = "Output the cut list in a .csv file that can be opened by programs like Microsoft Excel and iWork Pages."
-  
-  # Create the title of the HTML page.
-  def title(label)
-    
-    "#{label}\n"
-    
-  end
-  
-  # Add a heading to each section of parts.
-  def section_heading(label)
-    
-    "#{label}\n"
-    
-  end
-  
-  # Represents the roww in the table.
-  # 
-  # The part data is passed in and then formatted.
-  # 
-  # Available fields are: cabinet_name, part_name, quantity, width, length, 
-  # thickness, material. 
-  # 
-  # TODO: Add in notes, grain direction.
-  def rows(parts)
-    
-    # Construct the heading row for the table.
-    data = "Cabinet #,Part Name,Quantity,Width,Length,Thickness,Material\n" 
-    
-    # Loop through each part and generate a row.
-    if parts != nil
-    
-      data += parts.each { |p| row(p) }
-      
-    end
-    
-    data
-    
-  end
-  
-  # Format each row in the table.
-  def row(part)
-    
-    # TODO: Add in notes, grain direction.
-    "#{part.cabinet_name},#{part.part_name},#{part.quantity},#{part.width},#{part.length},#{part.thickness},#{part.material}\n"
-    
-  end
-  
-  def section_footer(parts)
-    
-    # parts_collection = Parts.new(parts)
-    # 
-    # board_feet = parts_collection.get_board_feet
-    # square_footage = parts_collection.get_square_footage
-    # total_parts = parts_collection.get_total_parts
-    # 
-    # # TODO: Show count (hardware), board ft (solid), sq ft (sheet), or a 
-    # # combination of all three depending on what parts are passed.
-    # 
-    # # Return the board feet, square footage and total parts.
-    # <<-EOS
-    # 
-    #   <p><strong>Total Board Feet</strong> #{board_feet} board feet</p>
-    #   <p><strong>Total Square Footage</strong> #{square_footage} sq. ft.</p>
-    #   <p><strong>Total Parts</strong> #{total_parts}</p>
-    # 
-    # EOS
-    
-    ''
-    
-  end
-    
-  # Render the data to a CSV file.
-  def render(model, data)
-    
-    CSVOutputFormat.new(model, data).run
-    
-  end
-
-end
-
-
 # Renders the cut list into an HTML page for instant viewing.
 class HTMLRenderer < Renderer
   
@@ -177,7 +90,7 @@ class HTMLRenderer < Renderer
   def heading(title, opts)
     
     # Default CSS location.
-    css_location = 'css/master.css'
+    css_location = 'css/html-cutlist.css'
     
     # Check to see if the css_location option was passed to the heading method.
     opts.each { |key, value|
@@ -187,15 +100,19 @@ class HTMLRenderer < Renderer
 
         css_location = value
 
-        puts "css_location: #{css_location}" if $debug
-
       end
 
     }
+
+    # Find the support file.
+    css_file_path = Sketchup.find_support_file(css_location.to_s, 'plugins/Cutlister/')
     
-    puts "css_location for the HTMLRenderer is '#{css_location}'" if $debug
+    css_file_contents = IO.read(css_file_path)
     
-    <<-EOS
+    puts "[HTMLRenderer.heading] css_location: #{css_location}" if $debug
+    puts "[HTMLRenderer.heading] css_file_path: #{css_file_path}" if $debug
+    
+    return <<-EOS
     
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
       <html xmlns="http://www.w3.org/1999/xhtml"xml:lang="en" lang="en">
@@ -206,7 +123,12 @@ class HTMLRenderer < Renderer
               <title>#{title}</title>
 
               <!-- Stylesheets -->
-              <link type="text/css" rel="stylesheet" href="#{css_location}" media="all" />
+              <!--<link type="text/css" rel="stylesheet" href="#{css_file_path}" media="all" />-->
+              <style type="text/css">
+              
+                #{css_file_contents}
+              
+              </style>
 
           </head>
           <body>
@@ -239,8 +161,8 @@ class HTMLRenderer < Renderer
   # TODO: Add in notes, grain direction.
   def rows(parts, fields = [
                             [
-                              "Cabinet",
-                              "part.cabinet_name" 
+                              "Sub Assembly",
+                              "part.sub_assembly" 
                             ],
                             [ 
                               "Part Name", 
@@ -252,15 +174,15 @@ class HTMLRenderer < Renderer
                             ],
                             [ 
                               "Width",
-                              "part.width"
+                              "part.width.to_html_fraction"
                             ],
                             [ 
                               "Length",
-                              "part.length"
+                              "part.length.to_html_fraction"
                             ],
                             [ 
                               "Thickness", 
-                              "part.thickness"
+                              "part.thickness.to_html_fraction"
                             ],
                             [ 
                               "Material",
@@ -304,7 +226,7 @@ class HTMLRenderer < Renderer
       
       }
       
-      puts "all_rows: #{all_rows}"
+      puts "[HTMLRenderer.rows] all_rows: #{all_rows}" if $debug
       
       html += all_rows.to_s
     
@@ -330,11 +252,12 @@ class HTMLRenderer < Renderer
     
     # TODO: Add in notes, grain direction.
     html = "<tr>"
+
     fields.each { |f|
       
       val = eval f[1] # Eval can be dangerous if passing something wrong into it...
 
-      puts "row values: #{f[0]}, #{val}\n\n" if $debug
+      puts "[HTMLRenderer.row] row values: #{f[0]}, #{val}\n\n" if $debug
       
       html += "<td>#{val.to_s}</td>"
       
@@ -342,7 +265,7 @@ class HTMLRenderer < Renderer
       
     html += "</tr>"
     
-    puts "row html: #{html}"
+    puts "[HTMLRenderer.row] row html: #{html}" if $debug
     
     html
     
@@ -378,6 +301,7 @@ class HTMLRenderer < Renderer
        
               <p class="page-tools">
                   <input type="button" value="Print Page" class="button print" onClick="window.print();return false;" />
+                  <input type="button" value="Close Page" class="button close grayed" onClick="window.close();" />
               </p>
       
           </body>
@@ -404,5 +328,153 @@ class HTMLRenderer < Renderer
     
   end
   
+end
+
+
+# Exports the cut list into a Comma Seperated Values (CSV) file, which will
+# work in programs like Mircosoft Excel (PC/Mac) and Apple iWork Numbers (Mac).
+class CSVRenderer < Renderer
+  
+  @display_name = "CSV"
+  @description = "Output the cut list in a .csv file that can be opened by programs like Microsoft Excel and iWork Pages."
+  
+  # Create the title of the HTML page.
+  def title(label)
+    
+    "#{label}\n"
+    
+  end
+  
+  # Add a heading to each section of parts.
+  def section_heading(label)
+    
+    "#{label}\n"
+    
+  end
+  
+  # Represents the roww in the table.
+  # 
+  # The part data is passed in and then formatted.
+  # 
+  # Available fields are: cabinet_name, part_name, quantity, width, length, 
+  # thickness, material. 
+  # 
+  # TODO: Add in notes, grain direction.
+  def rows(parts, fields = [
+                            [
+                              "Sub Assembly",
+                              "part.sub_assembly" 
+                            ],
+                            [ 
+                              "Part Name", 
+                              "part.part_name"
+                            ],
+                            [ 
+                              "Quantity", 
+                              "part.quantity"
+                            ],
+                            [ 
+                              "Width",
+                              "part.width.to_fraction"
+                            ],
+                            [ 
+                              "Length",
+                              "part.length.to_fraction"
+                            ],
+                            [ 
+                              "Thickness", 
+                              "part.thickness.to_fraction"
+                            ],
+                            [ 
+                              "Material",
+                              "part.material"
+                            ]
+                          ])
+    
+    data = ''
+
+    # List each heading for the coumns based on the `fields` parameter.
+    fields.each { |f|
+      
+      data += "#{f[0].to_s},"
+      
+    }
+    
+    # Loop through each part and generate a row.
+    if parts != nil
+      
+      all_rows = ""
+      
+      parts.each { |p| 
+        
+        all_rows += row(p, fields)
+      
+      }
+      
+      puts "[CSVRenderer.rows] all_rows: #{all_rows}" if $debug
+      
+      data += all_rows.to_s
+    
+    else
+      
+      UI.messagebox "Sorry, there are no parts to cutlist...", MB_OK
+    
+    end
+    
+    data
+    
+  end
+  
+  # Format each row in the table.
+  def row(part, fields)
+    
+    data = ""
+    
+    # TODO: Add in notes, grain direction.
+    fields.each { |f|
+      
+      val = eval f[1] # Eval can be dangerous if passing something wrong into it...
+
+      puts "[CSVRenderer.row] row values: #{f[0]}, #{val}\n\n" if $debug
+      
+      data += "#{val.to_s},"
+      
+    }
+    
+    data
+    
+  end
+  
+  def section_footer(parts)
+    
+    # parts_collection = Parts.new(parts)
+    # 
+    # board_feet = parts_collection.get_board_feet
+    # square_footage = parts_collection.get_square_footage
+    # total_parts = parts_collection.get_total_parts
+    # 
+    # # TODO: Show count (hardware), board ft (solid), sq ft (sheet), or a 
+    # # combination of all three depending on what parts are passed.
+    # 
+    # # Return the board feet, square footage and total parts.
+    # <<-EOS
+    # 
+    #   <p><strong>Total Board Feet</strong> #{board_feet} board feet</p>
+    #   <p><strong>Total Square Footage</strong> #{square_footage} sq. ft.</p>
+    #   <p><strong>Total Parts</strong> #{total_parts}</p>
+    # 
+    # EOS
+    
+    ''
+    
+  end
+    
+  # Render the data to a CSV file.
+  def render(model, data)
+    
+    CSVOutputFormat.new(model, data).run
+    
+  end
+
 end
 

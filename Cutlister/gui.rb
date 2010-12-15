@@ -1,21 +1,15 @@
 # Create a web dialog.
 class WebUI
   
-  # def initialize #(model)
-  #   
-  #   
-  #   
-  # end
-  
   # Relative location of the Cutlister input html page.
   @@ui_location = '/ui.html'
   
   # Make the active model a class variable.
-  @@model = Sketchup.active_model
+  # @@model = Sketchup.active_model
   
-  puts "@@ui_location: #{@@ui_location}" if $debug
+  puts "[WebUI] @@ui_location: #{@@ui_location}" if $debug
   # puts "@@result_location: #{@@result_location}" if $debug
-  puts "@@model: #{@@model}" if $debug
+  # puts "[WebUI] @@model: #{@@model}" if $debug
   
   # Gets the location of the UI HTML file.
   def get_ui_location
@@ -27,9 +21,9 @@ class WebUI
   # Create a page title to use for the page title.
   def page_title
     
-    page_title =  "Cutlister (#{$version}) - Cutlist for project: "# + @@model.title
+    page_title = "Cutlister (#{$version})"#  - Cutlist for project: #{@@model.title}
     
-    puts "page_title: #{page_title}" if $debug
+    puts "[WebUI.page_title] page_title: #{page_title}" if $debug
     
     return page_title
     
@@ -39,7 +33,7 @@ class WebUI
 
     @dialog = UI::WebDialog.new(page_title, true, @pref_key, @width, @height, @left, @top)
     
-    puts "@dialog: #{@dialog}" if $debug
+    puts "[WebUI.open_dialog] @dialog: #{@dialog}" if $debug
     
     @dialog.set_file(File.dirname(__FILE__) + get_ui_location)
 
@@ -51,7 +45,7 @@ class WebUI
   # Display the WebDialog.
   def display
   
-    puts "Showing WebUI dialog..." if $debug
+    puts "[WebUI.dispaly] Showing WebUI dialog..." if $debug
   
     @dialog.show {}
   
@@ -62,17 +56,17 @@ class WebUI
     
     @results = results
     
-    puts "@results: #{@results}" if $debug
+    # puts "[WebUI.show] @results: #{@results}" if $debug
     
     open_dialog
     
-    puts "Adding handle_close action callback..." if $debug
+    puts "[WebUI.show] Adding handle_close action callback..." if $debug
     
     # Create a callback that handles closing the dialog if the close button 
     # was clicked.
     @dialog.add_action_callback("handle_close") { |dialog, params| 
       
-      puts "Closing web dialog..."
+      puts "[WebUI.show] Closing web dialog..."
       
       @dialog.close()
       
@@ -94,8 +88,8 @@ class ToolWebUI < WebUI
   def initialize
     
     # Set up the UI options.
-    @model = Sketchup.active_model
-    @selection = @model.selection
+    # @model = Sketchup.active_model
+    # @selection = @model.selection
     @pref_key = "CutlisterUI"
     @width = 500
     @height = 490
@@ -103,10 +97,16 @@ class ToolWebUI < WebUI
     @top = 100
     @formats = get_format_list
     @list_types = get_list_types
-  
-    puts "ToolWebUI options: pref_key #{@pref_key}, width #{@width}, height #{@height}, left #{@left}, top #{@top}\n" if $debug
-    puts "@formats: #{@formats}" if $debug
-    puts "@list_types: #{@list_types}\n" if $debug
+    
+    # puts "[ToolWebUI.initialize] @model: #{@model}" if $debug
+    # puts "[ToolWebUI.initialize] @selection: #{@selection}" if $debug
+    puts "[ToolWebUI.initialize] @pref_key: #{@pref_key}" if $debug
+    puts "[ToolWebUI.initialize] @width: #{@width}" if $debug
+    puts "[ToolWebUI.initialize] @height: #{@height}" if $debug
+    puts "[ToolWebUI.initialize] @left: #{@left}" if $debug
+    puts "[ToolWebUI.initialize] @top: #{@top}" if $debug
+    puts "[ToolWebUI.initialize] @formats: #{@foramts}" if $debug
+    puts "[ToolWebUI.initialize] @list_types: #{@list_types}\n\n" if $debug
   
   end
   
@@ -116,7 +116,7 @@ class ToolWebUI < WebUI
     
     @format_subclasses = Renderer.subclasses.reverse
     
-    puts "@format_subclasses: #{@format_subclasses}\n" if $debug
+    puts "[ToolWebUI.get_format_list] @format_subclasses: #{@format_subclasses}\n" if $debug
     
     subclass_list = []
     
@@ -150,7 +150,7 @@ class ToolWebUI < WebUI
     
     @cutlist_subclasses = Cutlist.subclasses.reverse
     
-    puts "@cutlist_subclasses: #{@cutlist_subclasses}\n\n" if $debug
+    puts "[ToolWebUI.get_list_types] @cutlist_subclasses: #{@cutlist_subclasses}\n\n" if $debug
     
     subclass_list = []
     
@@ -182,16 +182,22 @@ class ToolWebUI < WebUI
   # function that runs the Cutlister plugin from the UI.
   def add_callbacks
 
-    puts "Adding handle_run action callback...\n\n" if $debug
+    puts "[ToolWebUI.add_callbacks] Adding handle_run action callback...\n\n" if $debug
     
     @dialog.add_action_callback("handle_run") { |dialog, params|
       
-      puts "handle_run has been called from within the WebDialog:\ndialog=#{dialog}\nparams=#{params}\n\n" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] handle_run called:\ndialog: #{dialog}\nparams: #{params}\n\n" if $debug
+      
+      model = Sketchup.active_model
+      selection = model.selection
+      
+      puts "[ToolWebUI.add_callbacks('handle_run')] model: #{model}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] selection: #{selection}" if $debug
       
       results = params.split('&') # Split params by ampersands, which is how jQuery serializes form data.
       # results = results
       
-      puts "Results: #{results}\n\n"
+      # puts "[ToolWebUI.add_callbacks('handle_run')] results: #{results}\n\n"
       
       # Create a new hash to add our form results to.
       result_hash = Hash.new
@@ -213,8 +219,8 @@ class ToolWebUI < WebUI
         } 
         
         # Debug the key/value pairs...
-        puts "Key: #{key}" if $debug
-        value.each { |v| puts "Value: #{v}" if $debug }
+        puts "[ToolWebUI.add_callbacks('handle_run')] results key: #{key}" if $debug
+        value.each { |v| puts "[ToolWebUI.add_callbacks('handle_run')] results value (array): #{v}" if $debug }
         puts "\n" if $debug
         
         # Add the key/value pair to the result_hash.
@@ -224,27 +230,29 @@ class ToolWebUI < WebUI
       }
       
       # Add debugging info...
-      puts "format: #{result_hash['format']}" if $debug
-      puts "list_type: #{result_hash['list_type']}" if $debug
-      puts "show_sheets: #{result_hash['sheets']}" if $debug
-      puts "show_solids: #{result_hash['solids']}" if $debug
-      puts "show_hardware: #{result_hash['hardware']}" if $debug
-      puts "sheet_materials: #{result_hash['sheet_materials']}" if $debug
-      puts "solid_materials: #{result_hash['solid_materials']}\n\n" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['format']: #{result_hash['format']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['list_type']: #{result_hash['list_type']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['sheets']: #{result_hash['sheets']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['solids']: #{result_hash['solids']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] esult_hash['hardware']: #{result_hash['hardware']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['sheet_materials']: #{result_hash['sheet_materials']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['solid_materials']: #{result_hash['solid_materials']}" if $debug
       
       # Construct the options hash.
       options = {
         "show_sheets" => result_hash['sheets'].to_s == "on" ? true : false,
         "show_solids" => result_hash['solids'].to_s == "on" ? true : false,
         "show_hardware" => result_hash['hardware'].to_s == "on" ? true : false,
+        "sheet_materials" => result_hash['sheet_materials'].to_a,
+        "solid_materials" => result_hash['solid_materials'].to_a
       }
       
-      puts "options hash: #{options.to_s}\n\n" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] options: #{options}" if $debug
       
       # Get all the parts in the selection.
-      parts = PartList.new(@model, @selection)
+      parts = PartList.new(model, selection, options)
       
-      puts "parts: #{parts}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] parts: #{parts}" if $debug
       
       # Construct a Renderer instance based on what was chosen in the UI.
       # 
@@ -252,18 +260,18 @@ class ToolWebUI < WebUI
       format_string = result_hash['format'].to_s
       renderer = Kernel.const_get(format_string).new()
       
-      puts "renderer: #{renderer}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] renderer: #{renderer}" if $debug
       
       # Construct a Cutlist instance based on what was chosen in the UI.
       # 
       # This takes the name of a class and creates a new instance of it.
       list_type_string = result_hash['list_type'].to_s
-      cutlist = Kernel.const_get(list_type_string).new(@model, renderer, parts, options).build
+      cutlist = Kernel.const_get(list_type_string).new(model, renderer, parts, options).build
       
-      puts "cutlist: #{cutlist}\n\n" if $debug
+      # puts "[ToolWebUI.add_callbacks('handle_run')] cutlist: #{cutlist}\n\n" if $debug
       
       # Render cutlist.
-      renderer.render(@model, cutlist)
+      renderer.render(model, cutlist)
     
     }
 
@@ -274,7 +282,7 @@ class ToolWebUI < WebUI
 
     @dialog.show {
       
-      puts "Showing GUI dialog." if $debug
+      puts "[ToolWebUI.display] Showing GUI dialog." if $debug
       
       # Run a script to populate the "Formats" select box in the WebDialog.
       @dialog.execute_script("populate_format_list(#{@formats});")
@@ -294,8 +302,6 @@ end
 class ResultsWebUI < WebUI
   
   def initialize
-
-    # super(model)
     
     # Set up the UI options.
     @pref_key = "CutlisterResults"
@@ -304,23 +310,20 @@ class ResultsWebUI < WebUI
     @left = 100
     @top = 100
   
-    puts "ResultsWebUI options: pref_key #{@pref_key}, width #{@width}, height #{@height}, left #{@left}, top #{@top}" if $debug
+    puts "[ResultsWebUI.initialize] @pref_key: #{@pref_key}" if $debug
+    puts "[ResultsWebUI.initialize] @width: #{@width}" if $debug
+    puts "[ResultsWebUI.initialize] @height: #{@height}" if $debug
+    puts "[ResultsWebUI.initialize] @left: #{@left}" if $debug
+    puts "[ResultsWebUI.initialize] @top: #{@top}\n\n" if $debug
   
-  end
-  
-  def add_callbacks
-    
-    puts "results: #{@results}" if $debug
-    
   end
   
   def open_dialog
 
     @dialog = UI::WebDialog.new(page_title, true, @pref_key, @width, @height, @left, @top)
     
-    puts "@dialog: #{@dialog}" if $debug
+    puts "[ResultsWebUI.open_dialog] @dialog: #{@dialog}\n\n" if $debug
     
-    # @dialog.set_file(File.dirname(__FILE__) + get_result_location)
     @dialog.set_html(@results)
 
   end
@@ -330,9 +333,7 @@ class ResultsWebUI < WebUI
     
     @dialog.show {
       
-      puts "Showing ResultsWebUI..." if $debug
-      
-      # @dialog.execute_script("handleResults(\'#{@results}\');");
+      puts "[ResultsWebUI.display] Showing ResultsWebUI...\n\n" if $debug
       
     }
     
