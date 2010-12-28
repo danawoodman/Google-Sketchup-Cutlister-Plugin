@@ -107,16 +107,22 @@ class PartList
     
   end
   
+  # Add a part to the list of parts in the model.
   def add_part(part)
     
     @parts.push(part)
     
   end
-    
+  
+  # Get all the parts within a list of entities. This excludes entites in the 
+  # model that are not groups/components, as well as entites that are hidden.
+  # 
+  # We set sub_assembly_name to "N/A" as a default because if a part is cut 
+  # listed that does not have a parent group/component, then it does not have a
+  # sub assembly name to use. 
   def get_parts(parts, sub_assembly_name = "N/A")
     
     puts "[PartList.get_parts] Getting parts...\n\n" if $debug
-    
     puts "[PartList.get_parts] sub_assembly_name: #{sub_assembly_name}\n\n" if $debug
     
     # parts_array = []
@@ -136,6 +142,8 @@ class PartList
         material = nil
         sub_parts = nil
         
+        # If the part is a Component, get it's name, material and sub parts 
+        # based on it's "definition".
         if p.typename == "ComponentInstance"
           
           part_name = p.definition.name
@@ -146,7 +154,9 @@ class PartList
           
           puts "[PartList.get_parts] (ComponentInstance) part_name: #{part_name}" if $debug
           puts "[PartList.get_parts] (ComponentInstance) sub_parts: #{sub_parts}\n\n" if $debug
-          
+        
+        # If the part is a Group, get it's name, material and sub parts 
+        # based on it's property methods.
         elsif p.typename == "Group"
           
           part_name = p.name
@@ -158,6 +168,8 @@ class PartList
           puts "[PartList.get_parts] (Group) part_name: #{part_name}" if $debug
           puts "[PartList.get_parts] (Group) sub_parts: #{sub_parts}\n\n" if $debug
           
+          # # TODO: Do we need to include the below code? I believe it is for older
+          # # versions of SketchUp...
           # if sub_assembly_name == nil || sub_assembly_name == ""
           #   
           #   # Let's see if this is a copy of a group which might already 
@@ -219,7 +231,7 @@ class PartList
           }
           
         end
-                
+        
         sub_parts = get_parts(sub_parts, part_name)     
        
         # If the part does not have sub_parts or if it is a hardware part 
