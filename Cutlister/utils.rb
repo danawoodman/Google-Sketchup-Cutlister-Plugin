@@ -65,7 +65,7 @@ class Float
   #   
   # end
   
-  def to_fraction
+  def to_fraction(round_dimensions=false)
     
     fraction = case self.abs % 1.0
       
@@ -106,21 +106,29 @@ class Float
     if fraction
       
       body = case self.floor
-      when -1 then '-'
-      when  0 then ''
-      else self.to_i.to_s
-      end
+        when -1 then '-'
+        when  0 then ''
+        else self.to_i.to_s
+          end
       "#{body} #{fraction}"
       
     else
       
-      "~ #{self.to_s}"
+      if round_dimensions
+        
+        "#{format("%0.2f", self).to_s}"
+        
+      else
+        
+        "~ #{self.to_s}"
+      
+      end
       
     end
     
   end
   
-  def to_html_fraction
+  def to_html_fraction(round_dimensions=false)
     
     fraction = case self.abs % 1.0
       
@@ -170,7 +178,15 @@ class Float
       
     else
       
-      "~ #{self.to_s}"
+      if round_dimensions
+        
+        "#{format("%0.2f", self).to_s}"
+        
+      else
+        
+        "~ #{self.to_s}"
+      
+      end
       
     end
     

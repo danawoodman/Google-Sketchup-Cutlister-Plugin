@@ -6,7 +6,10 @@
 # actually used in the code other than to get it's sub-classes.
 class Renderer
   
-  def initialize
+  def initialize(round_dimensions=false)
+    
+    @round_dimensions = round_dimensions
+    
   end
   
   # Add a display name property for displaying in the web dialog UI.
@@ -41,7 +44,36 @@ class Renderer
     
   end
   
-  def rows(parts, labels, values)
+  def rows(parts, fields = [
+                            [
+                              "Sub Assembly",
+                              "part.sub_assembly" 
+                            ],
+                            [ 
+                              "Part Name", 
+                              "part.part_name"
+                            ],
+                            [ 
+                              "Quantity", 
+                              "part.quantity"
+                            ],
+                            [ 
+                              "Width",
+                              "part.width.to_html_fraction(#{@round_dimensions})"
+                            ],
+                            [ 
+                              "Length",
+                              "part.length.to_html_fraction(#{@round_dimensions})"
+                            ],
+                            [ 
+                              "Thickness", 
+                              "part.thickness.to_html_fraction(#{@round_dimensions})"
+                            ],
+                            [ 
+                              "Material",
+                              "part.material"
+                            ]
+                          ])
     
     ''
     
@@ -80,9 +112,12 @@ class HTMLRenderer < Renderer
   @display_name = "Web Page"
   @description = "Open a web page to view the cut list immediately. The web page can be printed for quick cut listing."
   
-  def initialize(output_to_file = false)
+  def initialize(round_dimensions, output_to_file=false)
+    
+    super(round_dimensions)
     
     @output_to_file = output_to_file
+    @round_dimensions = round_dimensions
     
   end
   
@@ -174,15 +209,15 @@ class HTMLRenderer < Renderer
                             ],
                             [ 
                               "Width",
-                              "part.width.to_html_fraction"
+                              "part.width.to_html_fraction(#{@round_dimensions})"
                             ],
                             [ 
                               "Length",
-                              "part.length.to_html_fraction"
+                              "part.length.to_html_fraction(#{@round_dimensions})"
                             ],
                             [ 
                               "Thickness", 
-                              "part.thickness.to_html_fraction"
+                              "part.thickness.to_html_fraction(#{@round_dimensions})"
                             ],
                             [ 
                               "Material",
@@ -338,6 +373,14 @@ class CSVRenderer < Renderer
   @display_name = "CSV"
   @description = "Output the cut list in a .csv file that can be opened by programs like Microsoft Excel and iWork Pages."
   
+  def initialize(round_dimensions)
+    
+    super(round_dimensions)
+    
+    @round_dimensions = round_dimensions
+    
+  end
+  
   # Create the title of the HTML page.
   def title(label)
     
@@ -375,15 +418,15 @@ class CSVRenderer < Renderer
                             ],
                             [ 
                               "Width",
-                              "part.width.to_fraction"
+                              "part.width.to_fraction(#{@round_dimensions})"
                             ],
                             [ 
                               "Length",
-                              "part.length.to_fraction"
+                              "part.length.to_fraction(#{@round_dimensions})"
                             ],
                             [ 
                               "Thickness", 
-                              "part.thickness.to_fraction"
+                              "part.thickness.to_fraction(#{@round_dimensions})"
                             ],
                             [ 
                               "Material",

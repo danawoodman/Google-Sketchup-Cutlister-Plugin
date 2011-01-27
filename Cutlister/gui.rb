@@ -66,7 +66,7 @@ class WebUI
     # was clicked.
     @dialog.add_action_callback("handle_close") { |dialog, params| 
       
-      puts "[WebUI.show] Closing web dialog..."
+      puts "[WebUI.show] Closing web dialog..." if $debug
       
       @dialog.close()
       
@@ -91,8 +91,8 @@ class ToolWebUI < WebUI
     # @model = Sketchup.active_model
     # @selection = @model.selection
     @pref_key = "CutlisterUI"
-    @width = 500
-    @height = 490
+    @width = 600
+    @height = 555
     @left = 100
     @top = 100
     @formats = get_format_list
@@ -234,9 +234,10 @@ class ToolWebUI < WebUI
       puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['list_type']: #{result_hash['list_type']}" if $debug
       puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['sheets']: #{result_hash['sheets']}" if $debug
       puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['solids']: #{result_hash['solids']}" if $debug
-      puts "[ToolWebUI.add_callbacks('handle_run')] esult_hash['hardware']: #{result_hash['hardware']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['hardware']: #{result_hash['hardware']}" if $debug
       puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['sheet_materials']: #{result_hash['sheet_materials']}" if $debug
       puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['solid_materials']: #{result_hash['solid_materials']}" if $debug
+      puts "[ToolWebUI.add_callbacks('handle_run')] result_hash['round_dimensions']: #{result_hash['round_dimensions']}" if $debug
       
       # Construct the options hash.
       options = {
@@ -244,7 +245,7 @@ class ToolWebUI < WebUI
         "show_solids" => result_hash['solids'].to_s == "on" ? true : false,
         "show_hardware" => result_hash['hardware'].to_s == "on" ? true : false,
         "sheet_materials" => result_hash['sheet_materials'].to_a,
-        "solid_materials" => result_hash['solid_materials'].to_a
+        "solid_materials" => result_hash['solid_materials'].to_a,
       }
       
       puts "[ToolWebUI.add_callbacks('handle_run')] options: #{options}" if $debug
@@ -258,7 +259,7 @@ class ToolWebUI < WebUI
       # 
       # This takes the name of a class and creates a new instance of it.
       format_string = result_hash['format'].to_s
-      renderer = Kernel.const_get(format_string).new()
+      renderer = Kernel.const_get(format_string).new(result_hash['round_dimensions'].to_s == "on" ? true : false)
       
       puts "[ToolWebUI.add_callbacks('handle_run')] renderer: #{renderer}" if $debug
       

@@ -11,6 +11,7 @@
         
         <!-- JavaScript -->
         <script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+        <script type="text/javascript" src="js/jquery.ui-1.8.9.min.js"></script>
         <script type="text/javascript" src="js/jquery.cookie.js"></script>
         <script type="text/javascript" src="js/jquery.pass_to_sketchup.js"></script>
         <script type="text/javascript">
@@ -65,6 +66,8 @@
             // jQuery: DOM load...
             $(function() {
 
+                $('#tabs').tabs();
+
                 // Define the jQuery selector for the form, to use in the following functions.
                 form = '#cutlist-form';
 
@@ -92,6 +95,9 @@
                     if ($.cookie('solid_materials')) {
                         $('#id_solid_materials').val($.cookie('solid_materials'));
                     };
+                    if ($.cookie('round_dimensions') == 'true') {
+                        $('#id_round_dimensions').attr('checked', true);
+                    };
 
                 };
 
@@ -108,6 +114,7 @@
                     $.cookie( 'hardware', $('#id_hardware').attr('checked'), { 'expires': 3650 } );
                     $.cookie( 'sheet_materials', $('#id_sheet_materials').val(), { 'expires': 3650 } );
                     $.cookie( 'solid_materials', $('#id_solid_materials').val(), { 'expires': 3650 } );
+                    $.cookie( 'round_dimensions', $('#id_round_dimensions').attr('checked'), { 'expires': 3650 } );
 
                     // options = get_form_values(form);
                     // 
@@ -184,31 +191,52 @@
             <div id="content">
                 
                 <form action="" method="post" id="cutlist-form">
+                
+                    <div id="tabs">
                     
-                    <div class="form-row">
-                        <label for="id_format">Format</label>
-                        <select name="format" id="id_format"></select>
-                    </div>
-                    <div class="form-row">
-                        <label for="id_list_type">List Type</label>
-                        <select name="list_type" id="id_list_type"></select>
-                    </div>
-                    <div class="form-row">
-                        <label>Include</label>
-                        <div class="form-row-block">
-                            <input type="checkbox" name="sheets" id="id_sheets" /> <label for="id_sheets">Sheet Goods</label><br />
-                            <input type="checkbox" name="solids" id="id_solids" /> <label for="id_solids">Solid Stock</label><br />
-                            <input type="checkbox" name="hardware" id="id_hardware" /> <label for="id_hardware">Hardware</label>
+                        <ul id="tabs-buttons">
+                            <li><a href="#cutlist" title="Go to the cutlisting windoe">Cutlist</a></li>
+                            <li><a href="#settings" title="Go to the settings windoe">Settings</a></li>
+                        </ul>
+                    
+                        <div id="cutlist" class="tab-panel">
+                            <div class="form-row">
+                                <label for="id_format">Format</label>
+                                <select name="format" id="id_format"></select>
+                            </div>
+                            <div class="form-row">
+                                <label for="id_list_type">List Type</label>
+                                <select name="list_type" id="id_list_type"></select>
+                            </div>
+                            <div class="form-row">
+                                <label>Include</label>
+                                <div class="form-row-block">
+                                    <input type="checkbox" name="sheets" id="id_sheets" /> <label for="id_sheets">Sheet Goods</label><br />
+                                    <input type="checkbox" name="solids" id="id_solids" /> <label for="id_solids">Solid Stock</label><br />
+                                    <input type="checkbox" name="hardware" id="id_hardware" /> <label for="id_hardware">Hardware</label>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <label for="id_sheet_materials" class="block-label">Sheet Materials</label>
+                                <textarea name="sheet_materials" id="id_sheet_materials"></textarea>
+                            </div>
+                            <div class="form-row">
+                                <label for="id_solid_materials" class="block-label">Solid Materials</label>
+                                <textarea name="solid_materials" id="id_solid_materials"></textarea>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-row">
-                        <label for="id_sheet_materials" class="block-label">Sheet Materials</label>
-                        <textarea name="sheet_materials" id="id_sheet_materials"></textarea>
-                    </div>
-                    <div class="form-row">
-                        <label for="id_solid_materials" class="block-label">Solid Materials</label>
-                        <textarea name="solid_materials" id="id_solid_materials"></textarea>
-                    </div>
+                        <div id="settings" class="tab-panel">
+                            <div class="form-row">
+                                <label>General Settings</label>
+                                <div class="form-row-block">
+                                    <input type="checkbox" name="round_dimensions" id="id_round_dimensions" /> <label for="id_round_dimensions">Round dimensions</label>
+                                </div>
+                            </div>
+                        </div>
+                    
+                    </div><!-- End: #tabs -->
+                
+                    
                     <div class="form-row">
                         <input type="submit" name="submit" id="id_submit" class="button" value="Export" />  <!-- onClick="handle_run();return false" -->
                         &nbsp;&nbsp;&nbsp;
@@ -216,12 +244,12 @@
                         &nbsp;&nbsp;&nbsp;
                         <input type="button" name="close" id="id_close" class="button grayed" value="Close" />  <!-- onClick="handle_close();return false" -->
                     </div>
-                    
+                
                 </form>
                 
-            </div>
+            </div><!-- End: #content -->
             
-        </div>
+        </div><!-- End: #conatiner -->
     
     </body>
 </html>

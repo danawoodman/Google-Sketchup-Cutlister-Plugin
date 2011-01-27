@@ -60,7 +60,7 @@ body {
     font: .9em "Helvetica Neue",Helvetica,Arial,sans-serif;
     padding: 10px;
     position: relative;
-    text-align: center;
+/*     text-align: center; */
 }
 
 p {
@@ -170,18 +170,67 @@ abbr {
 ----------------------------------------------------------------------------- */
 
 #container {
-    background: #F2F2F2;
-    border: 1px solid #C6C6C6;
-    border-radius: 4px;
-    padding: 20px 40px;
-    text-align: left;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
+    
 }
 
 /* -----------------------------------------------------------------------------
     PAGE ELEMENTS
 ----------------------------------------------------------------------------- */
+
+/* jQuery UI styles. */
+.ui-tabs-hide {
+    display: none;
+}
+
+/* Tabs. */
+#tabs {}
+    #tabs .tab-panel {
+        background: #F2F2F2;
+        border: 1px solid #ccc;
+        border-top: 0 none;
+        clear: both;
+        padding: 20px 40px;
+        text-align: left;
+    }
+    #tabs-buttons {
+        background: url('../img/dot-ccc.png') repeat-x left bottom;
+        float: left;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+        #tabs-buttons li {
+            float: left;
+            list-style: none;
+            margin: 0;
+            padding: 0 0 0 10px;
+        }
+        #tabs-buttons li a {
+            color: #666;
+            display: block;
+            float: left;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+            padding: 10px 20px;
+            text-decoration: none;
+        }
+        #tabs-buttons .ui-tabs-selected a {
+            background: #F2F2F2;
+            border: 1px #ccc solid;
+            border-bottom: 0 none;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            color: #000;
+        }
+        #tabs-buttons li a:hover {
+            border-bottom: 0 none;
+        }
 
 .button {
     background: #8CB02A;
@@ -231,7 +280,7 @@ abbr {
         float: left;
         font-weight: bold;
         margin-right: 20px;
-        width: 100px;
+        width: 120px;
     }
     .form-row label.block-label { /* Block level labels */
         float: none;
@@ -239,7 +288,7 @@ abbr {
         width: auto;
     }
     .form-row-block { /* Holds nested items like checkboxes */
-        margin-left: 120px; /* Label width + margin */
+        margin-left: 140px; /* Label width + margin */
     }
     .form-row-block label { /* Override the rules for labels */
         display: inline;
