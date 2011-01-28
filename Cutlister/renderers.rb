@@ -381,7 +381,7 @@ class CSVRenderer < Renderer
     
   end
   
-  # Create the title of the HTML page.
+  # Create the title of the CSV file.
   def title(label)
     
     "#{label}\n"
@@ -438,15 +438,14 @@ class CSVRenderer < Renderer
 
     # List each heading for the coumns based on the `fields` parameter.
     fields.each { |f|
-      
-      data += "#{f[0].to_s},"
-      
+      data += "#{f[0].to_s}"
+      data += f == fields.last ? "\n" : ","
     }
     
     # Loop through each part and generate a row.
     if parts != nil
       
-      all_rows = ""
+      all_rows = ''
       
       parts.each { |p| 
         
@@ -460,7 +459,7 @@ class CSVRenderer < Renderer
     
     else
       
-      UI.messagebox "Sorry, there are no parts to cutlist...", MB_OK
+      UI.messagebox "Sorry, there are no parts to cutlist... Please make sure you selected parts before cutlisting.", MB_OK
     
     end
     
@@ -477,10 +476,11 @@ class CSVRenderer < Renderer
     fields.each { |f|
       
       val = eval f[1] # Eval can be dangerous if passing something wrong into it...
+      
+      data += "#{val.to_s}"
+      data += f == fields.last ? "\n" : ","
 
       puts "[CSVRenderer.row] row values: #{f[0]}, #{val}\n\n" if $debug
-      
-      data += "#{val.to_s},"
       
     }
     
