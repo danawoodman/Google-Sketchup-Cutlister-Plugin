@@ -206,25 +206,155 @@ class BatchedCutlist < Cutlist
   #   super(renderer, parts)
   # 
   # end
-
+  
   # TODO: Group items based on material/thickness.
   
+  def build
+    
+    data = heading(:css_location => "css/html-cutlist.css").to_s
+    
+    data += page_title().to_s
+    
+    # Get all the parts in an array of part hashes.
+    all_parts = @parts.grouped
 
+    # # Sort parts.
+    # all_parts = all_parts.sort { |a, b|
+    #   a['material'] <=> b['material']
+    #   # a['thickness'] <=> b['thickness']
+    #   # a['width'] <=> b['width']
+    #   # a['length'] <=> b['length']
+    # }
+
+    # Create an empty array of materials.
+    materials = []
+
+    # Put all the materials in the list
+    all_parts.each  { |p|
+      materials.push(p['material']) 
+    }
+
+    # Make sure there is only one of each material.
+    materials = materials.uniq
+
+    # Create a blank hash to put sorted parts into.
+    grouped_parts = {}
+
+    # Create a new list of hashes that represent the material and then the parts 
+    # that are of that material (a blank hash).
+    materials.each { |m| 
+      grouped_parts[m] = {}
+    }
+
+    # Loop through each part, adding it to the right key in the sorted_list.
+    all_parts.each { |p| 
+
+     # Go through the list of materials.
+     materials.each { |m|
+
+        if p['material'] == m
+
+          # Check to see if there is a key for this thickness and if there is 
+          # append the part to the array of parts.
+          if grouped_parts[m][p['thickness']]
+            grouped_parts[m][p['thickness']] += [p]
+          # If there isn't a key for this thickness, create it now and add the 
+          # part array.
+          else
+            grouped_parts[m][p['thickness']] = [p]
+          end
+
+        end
+
+      }
+
+    }
+    # Sort by materials.
+    parts_by_material = grouped_parts.sort { |a,b|
+      a[0] <=> b[0]
+    }
+
+    # List all the parts, grouped.
+    parts_by_material.each { |t| # t for thickness.
+
+      # Sort thicknesses.
+      parts_by_thickness = t[1].sort { |a,b|
+        a[0] <=> b[0]
+      }
+      parts_by_thickness.reverse!
+
+      # Go through each thickness key.
+      parts_by_thickness.each { |p| # p for parts
+        # TODO: Apply dimensioning here...
+        data += section_heading("#{p[0].to_fraction} #{t[0]}")
+
+        # Sort parts by width, then length.
+        parts = p[1].sort { |a,b|
+          a['width'] <=> b['width']
+          # a['length'] <=> b['length']
+        }
+        parts.reverse!
+        
+        # Create a parts array to store the parts in.
+        parts_array = []
+        
+        # # Go through the parts that are of a specific thickness.
+        parts.each { |part| 
+          
+          # Check if part is a sheet good.
+          if @options["show_sheets"] && part['is_sheet']
+
+            parts_array.push(part)
+
+          end
+
+          # Check if part is solid stock.
+          if @options["show_solids"] && part['is_solid']
+
+            parts_array.push(part)
+
+          end
+
+          # Check if part is hardware.
+          if @options["show_hardware"] && part['is_hardware']
+
+            parts_array.push(part)
+
+          end
+          # puts "#{p['sub_assembly']} -- #{p['part_name']} -- #{p['quantity']} -- #{p['material']} -- Sheet? #{p['is_sheet']} -- Solid? #{p['is_solid']} -- Hardware? #{p['is_hardware']} -- #{p['width']} x #{p['length']} x #{p['thickness']}"
+        
+        }
+        
+        data += rows(parts_array)
+        
+        # TODO: Put section footer here, if needed
+        
+      }
+    }
+    
+    data += footer().to_s
+    
+    # Return the results.
+    data
+    
+  end
+  
   
 end
 
 
-# Groups the cut list based on cabinet number.
+# Groups the cutlist based on cabinet number.
 # 
-# This type of cutlist is usually used when assembling cabinets.
+# This type of cutlist is usually used when assembling cabinets and it consists 
+# of a cutlist grouped by cabinet name.
 class IndividualCutlist < Cutlist
-
+  
   def initialize(model, renderer, parts, options)
     
     super(model, renderer, parts, options)
   
   end
-
+  
   @display_name = "Individual"
   @description = "This cut list is usually used when assembling cabinets."
   
@@ -235,48 +365,10 @@ class IndividualCutlist < Cutlist
     
     data += page_title().to_s
     
-    # sheets = []
-    # solids = []
-    # hardware = []
-    # 
-    # @parts.each { |p| 
-    #   case p['type']
-    #     when 'sheet'
-    #       sheets << p
-    #     when 'solid'
-    #       solids << p
-    #     when 'hardware'
-    #       hardware << p
-    #   end
-    # }
     
     
-    # # Show sheet goods section.
-    # if @options["show_sheets"]
-    #   
-    #   data += section_heading("Sheet Goods").to_s
-    #   data += rows(@parts.sheets).to_s
-    #   data += section_footer(@parts.sheets).to_s
-    #   
-    # end
-    # 
-    # # Show solid stock section.
-    # if @options["show_solids"]
-    #   
-    #   data += section_heading("Solid Stock").to_s
-    #   data += rows(@parts.solids).to_s
-    #   data += section_footer(@parts.solids).to_s
-    # 
-    # end
-    # 
-    # # Show hardware section.
-    # if @options["show_hardware"]
-    #   
-    #   data += section_heading("Hardware").to_s
-    #   data += rows(@parts.hardware).to_s
-    #   data += section_footer(@parts.hardware).to_s
-    # 
-    # end
+    
+    
     
     data += footer().to_s
     
@@ -284,7 +376,7 @@ class IndividualCutlist < Cutlist
     data
     
   end
-
+  
 end
 
 

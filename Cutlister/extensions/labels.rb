@@ -95,13 +95,13 @@ class LabelRenderer < HTMLRenderer
       
         <h4>
           <span class="job-name">JOBNAMEHERE</span> - 
-          <span class="cabinet-name">#{part.sub_assembly}</span> - 
-          <span class="part-thickness">#{part.thickness.to_html_fraction}</span> -
-          <span class="part-material">#{part.material}</span>
+          <span class="cabinet-name">#{part['sub_assembly']}</span> - 
+          <span class="part-thickness">#{part['thickness'].to_html_fraction}</span> -
+          <span class="part-material">#{part['material']}</span>
         </h4>
         <p>
-          <span class="part-name">#{part.part_name}</span>
-          <span class="part-size">#{part.width.to_html_fraction} x #{part.length.to_html_fraction}</span>
+          <span class="part-name">#{part['part_name']}</span>
+          <span class="part-size">#{part['width'].to_html_fraction} x #{part['length'].to_html_fraction}</span>
         </p>
       
       </div>

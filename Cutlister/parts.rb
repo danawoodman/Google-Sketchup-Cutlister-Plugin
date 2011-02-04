@@ -48,7 +48,7 @@ class PartList
       
     }
     
-    part_array.empty? ? nil : part_array
+    part_array.empty? ? nil : to_hash(part_array)
 
   end
   
@@ -69,7 +69,7 @@ class PartList
       
     }
     
-    part_array.empty? ? nil : part_array
+    part_array.empty? ? nil : to_hash(part_array)
     
   end
   
@@ -90,20 +90,44 @@ class PartList
       
     }
     
-    part_array.empty? ? nil : part_array
+    part_array.empty? ? nil : to_hash(part_array)
 
   end
   
   def all
     
-    @parts
+    to_hash(@parts)
     
   end
   
-  # Returns a list of parts, grouping similar parts (e.g. duplicate parts...)
-  def get_grouped_parts
+  def grouped
     
-    # TODO: Write logic for this method...
+    # Go through parts grouping similar parts, increasing their quantity.
+    to_hash(@parts)
+    
+  end
+  
+  # Returns all the parts as an array of hashes.
+  def to_hash(parts_array)
+    
+    parts_array.collect! { |p| 
+      {
+          'sub_assembly' => p.sub_assembly,
+          'part_name' => p.part_name,
+          'quantity' => p.quantity,
+          'material' => p.material,
+          'is_sheet' => p.is_sheet,
+          'is_solid' => p.is_solid,
+          'is_hardware' => p.is_hardware,
+          'thickness' => p.thickness,
+          'width' => p.width,
+          'length' => p.length,
+          'area' => p.area,
+          'volume' => p.volume,
+          'square_feet' => p.square_feet,
+          'board_feet' => p.board_feet,
+        }
+    }
     
   end
   
@@ -111,6 +135,13 @@ class PartList
   def add_part(part)
     
     @parts.push(part)
+    
+  end
+  
+  # Remove a part from the list.
+  def remove_part(part)
+    
+    @parts.slice!(part)
     
   end
   
@@ -469,6 +500,7 @@ class PartList
     
   end
   
+  # Returns true if there are no parts, false if there are parts.
   def empty?
     
     @parts.length == 0
@@ -480,10 +512,25 @@ end
 
 class Part
   
+  attr_accessor :sub_assembly, 
+                :part_name, 
+                :quantity, 
+                :material,
+                :is_sheet,
+                :is_sold,
+                :is_hardware,
+                :thickness,
+                :width,
+                :length,
+                :area,
+                :volume,
+                :square_feet,
+                :board_feet
+  
   def initialize(entity, sub_assembly_name, part_name, material, is_sheet, is_solid, is_hardware)
     
-    @sub_assembly = sub_assembly_name
-    @part_name = part_name
+    @sub_assembly = sub_assembly_name ? sub_assembly_name : 'N/A'
+    @part_name = part_name ? part_name : 'N/A'
     @material = material
     @is_sheet = is_sheet
     @is_solid = is_solid
@@ -492,6 +539,7 @@ class Part
     # Find the bounding box for the part.
     boundingBox = entity.bounds
     
+    # If the part is a component instance, get the definition bounds.
     if entity.respond_to? "definition"
       
      boundingBox = entity.definition.bounds
@@ -518,14 +566,26 @@ class Part
     @length = sizes[2]
     
     # Calculate the dimensions of the part.
-    dimension_calculations()
+    # dimension_calculations()
+    @area = @length * @width
+    @volume = @area * @thickness
+    @square_feet = @area / 144
+    @board_feet = @volume / 144
     
+    # Debugging...
     puts "[Part.initialize] @sub_assembly: #{@sub_assembly}" if $debug
     puts "[Part.initialize] @part_name: #{@part_name}" if $debug
     puts "[Part.initialize] @material: #{@material}" if $debug
+    puts "[Part.initialize] @is_sheet: #{@is_sheet}" if $debug
+    puts "[Part.initialize] @is_solid: #{@is_solid}" if $debug
+    puts "[Part.initialize] @is_hardware: #{@is_hardware}" if $debug
     puts "[Part.initialize] @thickness: #{@thickness}" if $debug
     puts "[Part.initialize] @width: #{@width}" if $debug
     puts "[Part.initialize] @length: #{@length}\n\n" if $debug
+    puts "[Part.initialize] @area: #{@area}\n\n" if $debug
+    puts "[Part.initialize] @volume: #{@volume}\n\n" if $debug
+    puts "[Part.initialize] @square_feet: #{@square_feet}\n\n" if $debug
+    puts "[Part.initialize] @board_feet: #{@board_feet}\n\n" if $debug
     
     
     # @lengthInFeet = @length.to_feet
@@ -539,14 +599,20 @@ class Part
     
   end
 
-  def dimension_calculations
-
-    @area = @length * @width
-    @volume = @area * @thickness
-    @square_feet = @area / 144
-    @board_feet = @volume / 144
-
-  end
+  # def dimension_calculations
+  # 
+  #   area = @length * @width
+  #   volume = area * @thickness
+  #   square_feet = area / 144
+  #   board_feet = volume / 144
+  #   
+  #   # NOTE: Should this be integers or strings???
+  #   @area = area.to_s
+  #   @volume = volume.to_s
+  #   @square_feet = square_feet.to_s
+  #   @board_feet = board_feet.to_s
+  # 
+  # end
 
   # Bubble sort: Sorts in ascending order.
   def get_sorted_array(array)
@@ -580,143 +646,143 @@ class Part
   #   
   # end
 
-  def sub_assembly
-    
-    # If there is a sub_assembly_name, than use that, else show "N/A".
-    @sub_assembly ? @sub_assembly : 'N/A'
-    
-  end
+  # def sub_assembly
+  #   
+  #   # If there is a sub_assembly_name, than use that, else show "N/A".
+  #   @sub_assembly ? @sub_assembly : 'N/A'
+  #   
+  # end
+  # 
+  # def part_name
+  #   
+  #   # If there is a part_name, show that, or else show `N/A'.
+  #   @part_name ? @part_name : 'N/A'
+  #   
+  # end
+  # 
+  # def quantity
+  #   
+  #   # TODO: Calculate quantities...
+  #   '1'
+  #   
+  # end
   
-  def part_name
-    
-    # If there is a part_name, show that, or else show `N/A'.
-    @part_name ? @part_name : 'N/A'
-    
-  end
-  
-  def quantity
-    
-    # TODO: Calculate quantities...
-    '1'
-    
-  end
-  
-  def width
-    
-    @width
-    
-  end
-  
-  def length
-    
-    @length
-    
-  end
-  
-  def thickness
-    
-    @thickness
-    
-  end
-  
-  def material
-    
-    @material
-    
-  end
-  
-  def area
-    
-    @area.to_s
-    
-  end
-  
-  def volume
-    
-    @volume.to_s
-    
-  end
-  
-  def square_feet
-    
-    @square_feet.to_s
-    
-  end
-  
-  def board_feet
-    
-    @board_feet.to_s
-    
-  end
+  # def width
+  #   
+  #   @width
+  #   
+  # end
+  # 
+  # def length
+  #   
+  #   @length
+  #   
+  # end
+  # 
+  # def thickness
+  #   
+  #   @thickness
+  #   
+  # end
+  # 
+  # def material
+  #   
+  #   @material
+  #   
+  # end
+  # 
+  # def area
+  #   
+  #   @area.to_s
+  #   
+  # end
+  # 
+  # def volume
+  #   
+  #   @volume.to_s
+  #   
+  # end
+  # 
+  # def square_feet
+  #   
+  #   @square_feet.to_s
+  #   
+  # end
+  # 
+  # def board_feet
+  #   
+  #   @board_feet.to_s
+  #   
+  # end
 
   # Checks to see if a part is a sheet. Returns true if it is, false if not.
-  def is_sheet
-    
-    puts "[Part.is_sheet]: true\n\n" if $debug
-    
-    @is_sheet
-    # is_sheet = false
-    #     
-    #     # Do a case-insensitive search on all the sheet materials to see if the 
-    #     # material matches.
-    #     @sheet_materials.each { |m|
-    #       
-    #       if m.index(/#{@material}/i) != nil
-    #         
-    #         is_sheet = true
-    #         
-    #       end
-    #       
-    #     }
-    #     
-    #     puts "[Part.is_sheet]: (#{@material}) #{is_sheet}" if $debug
-    #     
-    #     is_sheet
-    
-  end
-  
-  # Checks to see if a part is a solid. Returns true if it is, false if not.
-  def is_solid
-    
-    puts "[Part.is_solid]: true\n\n" if $debug
-    
-    @is_solid
-    
-    # is_solid = false
-    #     
-    #     # Do a case-insensitive search on all the sheet materials to see if the 
-    #     # material matches.
-    #     @solid_materials.each { |m|
-    #       
-    #       if m.index(/#{@material}/i) != nil
-    #         
-    #         is_solid = true
-    #         
-    #       end
-    #       
-    #     }
-    #     
-    #     puts "[Part.is_solid]: (#{@material}) #{is_solid}" if $debug
-    #     
-    #     is_solid
-    
-  end
-  
-  # Checks to see if a part is hardware. Returns true if it is, false if not.
-  def is_hardware
-    
-    puts "[Part.is_hardware]: true\n\n" if $debug
-    
-    @is_hardware
-    
-    # # If the part is not a sheet or a solid, than it is assumed to be hardware.
-    #     is_hardware = is_sheet && is_solid ? false : true
-    #     
-    #     puts "[Part.is_hardware]: (#{@material}) #{is_hardware}" if $debug
-    #     
-    #     is_hardware
-    
-  end
+  # def is_sheet
+  #   
+  #   puts "[Part.is_sheet]: true\n\n" if $debug
+  #   
+  #   @is_sheet
+  #   # is_sheet = false
+  #   #     
+  #   #     # Do a case-insensitive search on all the sheet materials to see if the 
+  #   #     # material matches.
+  #   #     @sheet_materials.each { |m|
+  #   #       
+  #   #       if m.index(/#{@material}/i) != nil
+  #   #         
+  #   #         is_sheet = true
+  #   #         
+  #   #       end
+  #   #       
+  #   #     }
+  #   #     
+  #   #     puts "[Part.is_sheet]: (#{@material}) #{is_sheet}" if $debug
+  #   #     
+  #   #     is_sheet
+  #   
+  # end
+  # 
+  # # Checks to see if a part is a solid. Returns true if it is, false if not.
+  # def is_solid
+  #   
+  #   puts "[Part.is_solid]: true\n\n" if $debug
+  #   
+  #   @is_solid
+  #   
+  #   # is_solid = false
+  #   #     
+  #   #     # Do a case-insensitive search on all the sheet materials to see if the 
+  #   #     # material matches.
+  #   #     @solid_materials.each { |m|
+  #   #       
+  #   #       if m.index(/#{@material}/i) != nil
+  #   #         
+  #   #         is_solid = true
+  #   #         
+  #   #       end
+  #   #       
+  #   #     }
+  #   #     
+  #   #     puts "[Part.is_solid]: (#{@material}) #{is_solid}" if $debug
+  #   #     
+  #   #     is_solid
+  #   
+  # end
+  # 
+  # # Checks to see if a part is hardware. Returns true if it is, false if not.
+  # def is_hardware
+  #   
+  #   puts "[Part.is_hardware]: true\n\n" if $debug
+  #   
+  #   @is_hardware
+  #   
+  #   # # If the part is not a sheet or a solid, than it is assumed to be hardware.
+  #   #     is_hardware = is_sheet && is_solid ? false : true
+  #   #     
+  #   #     puts "[Part.is_hardware]: (#{@material}) #{is_hardware}" if $debug
+  #   #     
+  #   #     is_hardware
+  #   
+  # end
   
 end
 

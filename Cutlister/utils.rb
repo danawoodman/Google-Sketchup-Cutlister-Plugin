@@ -132,37 +132,37 @@ class Float
     
     fraction = case self.abs % 1.0
       
-      when 0 then ''  # No fraction...
+      when 0 then '&rdquo;'  # No fraction...
       
-      when 1.0 / 2 then '&frac12;'  # One half
+      when 1.0 / 2 then '&frac12;&rdquo;'  # One half
       
-      when 1.0 / 4 then '&frac14;'  # One quarter
-      when 3.0 / 4 then '&frac34;'  # Three quarters
+      when 1.0 / 4 then '&frac14;&rdquo;'  # One quarter
+      when 3.0 / 4 then '&frac34;&rdquo;'  # Three quarters
     
-      when 1.0 / 3 then '&#x2153;'  # One third
-      when 2.0 / 3 then '&#x2154;'  # Two thirds
+      when 1.0 / 3 then '&#x2153;&rdquo;'  # One third
+      when 2.0 / 3 then '&#x2154;&rdquo;'  # Two thirds
       
-      when 1.0 / 5 then '&#x2155;'  # One fifth
-      when 2.0 / 5 then '&#x2156;'  # Two fifths
-      when 3.0 / 5 then '&#x2157;'  # Three fifths
-      when 4.0 / 5 then '&#x2158;'  # Four fifths
+      when 1.0 / 5 then '&#x2155;&rdquo;'  # One fifth
+      when 2.0 / 5 then '&#x2156;&rdquo;'  # Two fifths
+      when 3.0 / 5 then '&#x2157;&rdquo;'  # Three fifths
+      when 4.0 / 5 then '&#x2158;&rdquo;'  # Four fifths
 
-      when 1.0 / 6 then '&#x2159;'  # One sixth
-      when 5.0 / 6 then '&#x215A;'  # Five sixths
+      when 1.0 / 6 then '&#x2159;&rdquo;'  # One sixth
+      when 5.0 / 6 then '&#x215A;&rdquo;'  # Five sixths
 
-      when 1.0 / 8 then '&#x215B;'  # One eighth
-      when 3.0 / 8 then '&#x215C;'  # Three eighths
-      when 5.0 / 8 then '&#x215D;'  # Five eighths
-      when 7.0 / 8 then '&#x215E;'  # Seven eighths
+      when 1.0 / 8 then '&#x215B;&rdquo;'  # One eighth
+      when 3.0 / 8 then '&#x215C;&rdquo;'  # Three eighths
+      when 5.0 / 8 then '&#x215D;&rdquo;'  # Five eighths
+      when 7.0 / 8 then '&#x215E;&rdquo;'  # Seven eighths
 
-      when 1.0 / 16 then '<sup>1</sup>&frasl;<sub>16</sub>'  # One sixteenth
-      when 3.0 / 16 then '<sup>3</sup>&frasl;<sub>16</sub>'  # Three sixteenths
-      when 5.0 / 16 then '<sup>5</sup>&frasl;<sub>16</sub>'  # Five sixteenths
-      when 7.0 / 16 then '<sup>7</sup>&frasl;<sub>16</sub>'  # Seven sixteenths
-      when 9.0 / 16 then '<sup>9</sup>&frasl;<sub>16</sub>'  # Nine sixteenths
-      when 11.0 / 16 then '<sup>11</sup>&frasl;<sub>16</sub>'  # Eleven sixteenths
-      when 13.0 / 16 then '<sup>13</sup>&frasl;<sub>16</sub>'  # Thirteen sixteenths
-      when 15.0 / 16 then '<sup>15</sup>&frasl;<sub>16</sub>'  # Seventeen sixteenths
+      when 1.0 / 16 then '<sup>1</sup>&frasl;<sub>16</sub>&rdquo;'  # One sixteenth
+      when 3.0 / 16 then '<sup>3</sup>&frasl;<sub>16</sub>&rdquo;'  # Three sixteenths
+      when 5.0 / 16 then '<sup>5</sup>&frasl;<sub>16</sub>&rdquo;'  # Five sixteenths
+      when 7.0 / 16 then '<sup>7</sup>&frasl;<sub>16</sub>&rdquo;'  # Seven sixteenths
+      when 9.0 / 16 then '<sup>9</sup>&frasl;<sub>16</sub>&rdquo;'  # Nine sixteenths
+      when 11.0 / 16 then '<sup>11</sup>&frasl;<sub>16</sub>&rdquo;'  # Eleven sixteenths
+      when 13.0 / 16 then '<sup>13</sup>&frasl;<sub>16</sub>&rdquo;'  # Thirteen sixteenths
+      when 15.0 / 16 then '<sup>15</sup>&frasl;<sub>16</sub>&rdquo;'  # Seventeen sixteenths
         
     end
     
@@ -180,11 +180,11 @@ class Float
       
       if round_dimensions
         
-        "#{format("%0.2f", self).to_s}"
+        "#{format("%0.2f", self).to_s}&rdquo;"
         
       else
         
-        "~ #{self.to_s}"
+        "~ #{self.to_s}&rdquo;"
       
       end
       

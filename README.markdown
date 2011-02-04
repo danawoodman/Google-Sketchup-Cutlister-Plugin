@@ -1,6 +1,8 @@
 # README for Cutlister
 
-[Cutlister][] is a Google SketchUp Plugin that automates the creating of cut lists for your project. This plugin also exports layouts for your sheet and part goods, allowing you to visualize exactly how much material you will need and how to cut it out, thus saving you material on your next project.
+[Cutlister][] is a Google SketchUp Plugin that automates the creating of cut lists for your woodworking project. A cut list is a table of parts used to make up a piece of cabinetry or furniture (such as a door, wall end, back or finished end).
+
+This plugin also exports layouts for your sheet and part goods, allowing you to visualize exactly how much material you will need and how to cut it out, thus saving you material on your next project (*Layouts are currently not implemented!*).
 
 This plugin is specifically designed for cabinet makers and woodworkers, but could also apply to other industries and applications.
 
@@ -12,7 +14,7 @@ Cutlister takes all the selected entities in your model and creates a cut list f
 
 The plugin exports these items in a variety of lists types and formats.
 
-You can choose from outputting an HTML page, a CSV file (for importing into programs like Microsoft Office and Apple iWork Numbers). 
+You can choose from outputting an HTML page, a CSV file (for importing into programs like Microsoft Office and Apple iWork Numbers), printing labels (only Avery 5366 labels currently) and, eventually, other formats. If there is a format you are interested in using, please fork the [Github repository][Cutlister] or create a case on the [GitHub issue tracker][githubrepo] to add it in. There is no guarantee that I will get around to it, but if I think it is a good idea, I may end up doing it.
 
 This plugin was designed to be extendable, allowing you to add your own output formats, cut lists and renderers. This means you could generate custom cut lists for your own particular needs without changing anything in the current code (more on this below).
 
@@ -42,13 +44,13 @@ To use Cutlister, just select the items in your model you want to cut list and r
 
 In order to get Cutlister to work right in your models, you may need to make some changes to your workflow. Below is the general work flow for getting Cutlister to work as expected:
 
-Layers are used to group similar parts to make it easier to isolate them and make changes (e.g. "Doors", "Shelfs", "Counters", etc...). *It has nothing to do with the cut listing of parts*.
+- Layers are used to group similar parts to make it easier to isolate them and make changes (e.g. "Doors", "Shelfs", "Counters", etc...). *It has nothing to do with the cut listing of parts*.
 
-Group each individual part to isolate it's geometry. Give the part a name (e.g. "Wall End", "Door", "Back", etc...) which will be used within Cutlister as the *Part Name* in Cutlister.
+- Group each individual part to isolate it's geometry. Give the part a name (e.g. "Wall End", "Door", "Back", etc...) which will be used within Cutlister as the *Part Name* in Cutlister.
 
-Group collections of parts into sub-assemblies (e.g. Cabinet numbers, like "101 1", "204 7", "Kitchen Vanity", etc...) which will be used as the cabinet number in the cut listing program. *You can use any naming convention that you like*, you are not limited to numbering your cabinets in any particular way. This will be used as the *Cabinet Name* in Cutlister.
+- Group collections of parts into sub-assemblies (e.g. Cabinet numbers, like "101 1", "204 7", "Kitchen Vanity", etc...) which will be used as the cabinet number in the cut listing program. *You can use any naming convention that you like*, you are not limited to numbering your cabinets in any particular way. This will be used as the *Cabinet Name* in Cutlister.
 
-Give the individual parts a material fill (e.g. "PF-MAPLE", "MDF", "Poplar". etc...) which will be *used as the material in Cutlister*. Do not apply a material to a group of components because the properties will not work in Cutlister (e.g. don't give the cabinet a material but give the parts that make up the cabinet a material). *Material numbers can be have letters, numbers, spaces, dashes (-), underscores (_) and be upper or lowercase*.
+- Give the individual parts a material fill (e.g. "PF-MAPLE", "MDF", "Poplar". etc...) which will be *used as the material in Cutlister*. Do not apply a material to a group of components because the properties will not work in Cutlister (e.g. don't give the cabinet a material but give the parts that make up the cabinet a material). *Material numbers can be have letters, numbers, spaces, dashes (-), underscores (_) and be upper or lowercase*.
 
 Once your models is setup, you can begin to cut list.
 
@@ -69,15 +71,19 @@ Next, you can select the **List Type** you want to export which controls how the
 
 You can choose to **Show** only *Sheet Goods*, *Solid Stock*, *Hardware* or any combination of them.
 
-The **Sheet Goods** list is a comma separated list of material names that match materials in your model. If the material name is in this list, it will be grouped as a *Sheet Good* part. The field is case-insensitive, meaning if you input "mdf", it would match any material in your model named "mdf", "MDF", "mDf", or any combination of capital letters. This field also allows you to have materials that contain spaces (e.g. "Shop Ply", "Pre-finish Maple", etc...).
+The **Sheet Goods** list is a comma separated list of material names that match materials in your model. If the material name is in this list, it will be grouped as a *Sheet Good* part. The field is case-insensitive, meaning if you input "mdf", it would match any material in your model named "mdf", "MDF", "mDf", or any combination of lowercase and capital letters. This field also allows you to have materials that contain spaces, dashes and underscores (e.g. "Shop Ply", "Pre-finish Maple", "peruvian_walnut", etc...).
 
-The **Solid Stock** list is the same as the *Sheet Goods* list above, but it instead labels parts as *Solid Stock*. The same rules apply for items in the list.
+The **Solid Stock** list is the same as the *Sheet Goods* list above, but it instead labels parts as *Solid Stock*. The same rules apply for items in the list. Generally, solid stock is considered to be anything cut out of lumber.
 
 ## Extending Cutlister
 
 Cutlister is designed to be extensible. This means that you can create new renderers, output formats and cut lists based on your needs. 
 
 If you wanted to export an XML file, for example, you could create a sub-class of the `Renderer`class (which is found in `renderers.rb`)  to construct your XML file and then create a sub-class of the `Cutlist` class (in `cutlist.rb`) to format the cut list output to work with XML.
+
+- **Renderers** format the content for a particular output like HTML, CSV or something else. Currently there are a base class called `Renderer` which is just a skeleton for other sub-classes, `HTMLRenderer` which constructs HTML tables and headings for a cutlist, and `CSVRenderer` which constructs cut lists for usage in programs that support `.csv` files (e.g. Excel, Numbers, Open Office, etc...). More renderers may be added in the future.
+
+- 
 
 Once you sub-class `Renderer` or `Cutlist`, your custom renderer/cutlist will show up in the "Format" and "List Type" select boxes in the UI (once you restart SketchUp).
 
@@ -120,7 +126,7 @@ If you want to contribute to this project, please fork Cutlister at the [Github 
 
 If you have any feedback or comments, feel free to send me an email at <dana@danawoodman.com>.
 
-If you find bugs or have a feature request, please add them at the [GitHub repository][githubrepo]
+If you find bugs or have a feature request, please add them at the [GitHub issue tracker][githubrepo]
 
 ## License
 

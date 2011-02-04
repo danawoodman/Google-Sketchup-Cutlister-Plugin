@@ -47,27 +47,27 @@ class Renderer
   def rows(parts, fields = [
                             [
                               "Sub Assembly",
-                              "part.sub_assembly" 
+                              "sub_assembly" 
                             ],
                             [ 
                               "Part Name", 
-                              "part.part_name"
+                              "part_name"
                             ],
                             [ 
                               "Quantity", 
-                              "part.quantity"
+                              "quantity"
                             ],
                             [ 
                               "Width",
-                              "part.width.to_html_fraction(#{@round_dimensions})"
+                              "width" #.to_html_fraction(#{@round_dimensions})
                             ],
                             [ 
                               "Length",
-                              "part.length.to_html_fraction(#{@round_dimensions})"
+                              "length" #.to_html_fraction(#{@round_dimensions})
                             ],
                             [ 
                               "Thickness", 
-                              "part.thickness.to_html_fraction(#{@round_dimensions})"
+                              "thickness" #.to_html_fraction(#{@round_dimensions})
                             ],
                             [ 
                               "Material",
@@ -197,31 +197,31 @@ class HTMLRenderer < Renderer
   def rows(parts, fields = [
                             [
                               "Sub Assembly",
-                              "part.sub_assembly" 
+                              "sub_assembly" 
                             ],
                             [ 
                               "Part Name", 
-                              "part.part_name"
+                              "part_name"
                             ],
                             [ 
                               "Quantity", 
-                              "part.quantity"
+                              "quantity"
                             ],
                             [ 
                               "Width",
-                              "part.width.to_html_fraction(#{@round_dimensions})"
+                              "width"
                             ],
                             [ 
                               "Length",
-                              "part.length.to_html_fraction(#{@round_dimensions})"
+                              "length"
                             ],
                             [ 
                               "Thickness", 
-                              "part.thickness.to_html_fraction(#{@round_dimensions})"
+                              "thickness"
                             ],
                             [ 
                               "Material",
-                              "part.material"
+                              "material"
                             ]
                           ])
     
@@ -290,7 +290,13 @@ class HTMLRenderer < Renderer
 
     fields.each { |f|
       
-      val = eval f[1] # Eval can be dangerous if passing something wrong into it...
+      # val = eval f[1] # Eval can be dangerous if passing something wrong into it...
+      val = part[f[1]]
+      
+      # Check if the val is a float, so we can perform fraction conversion.
+      if val.class == Float
+        val = val.to_html_fraction(@round_dimensions)
+      end
 
       puts "[HTMLRenderer.row] row values: #{f[0]}, #{val}\n\n" if $debug
       
@@ -406,31 +412,31 @@ class CSVRenderer < Renderer
   def rows(parts, fields = [
                             [
                               "Sub Assembly",
-                              "part.sub_assembly" 
+                              "sub_assembly" 
                             ],
                             [ 
                               "Part Name", 
-                              "part.part_name"
+                              "part_name"
                             ],
                             [ 
                               "Quantity", 
-                              "part.quantity"
+                              "quantity"
                             ],
                             [ 
                               "Width",
-                              "part.width.to_fraction(#{@round_dimensions})"
+                              "width"
                             ],
                             [ 
                               "Length",
-                              "part.length.to_fraction(#{@round_dimensions})"
+                              "length"
                             ],
                             [ 
                               "Thickness", 
-                              "part.thickness.to_fraction(#{@round_dimensions})"
+                              "thickness"
                             ],
                             [ 
                               "Material",
-                              "part.material"
+                              "material"
                             ]
                           ])
     
@@ -475,7 +481,13 @@ class CSVRenderer < Renderer
     # TODO: Add in notes, grain direction.
     fields.each { |f|
       
-      val = eval f[1] # Eval can be dangerous if passing something wrong into it...
+      # val = eval f[1] # Eval can be dangerous if passing something wrong into it...
+      val = part[f[1]]
+      
+      # Check if the val is a float, so we can perform fraction conversion.
+      if val.class == Float
+        val = val.to_fraction(@round_dimensions)
+      end
       
       data += "#{val.to_s}"
       data += f == fields.last ? "\n" : ","
