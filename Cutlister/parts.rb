@@ -517,7 +517,7 @@ class Part
                 :quantity, 
                 :material,
                 :is_sheet,
-                :is_sold,
+                :is_solid,
                 :is_hardware,
                 :thickness,
                 :width,

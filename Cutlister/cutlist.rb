@@ -298,7 +298,7 @@ class BatchedCutlist < Cutlist
         # Create a parts array to store the parts in.
         parts_array = []
         
-        # # Go through the parts that are of a specific thickness.
+        # Go through the parts that are of a specific thickness.
         parts.each { |part| 
           
           # Check if part is a sheet good.
@@ -365,7 +365,94 @@ class IndividualCutlist < Cutlist
     
     data += page_title().to_s
     
+    # Get all the parts in a hash.
+    all_parts = @parts.grouped
+
+    # Create an empty array of sub_assemblys.
+    sub_assemblies = []
+
+    # Put all the sub_assembly in the list
+    all_parts.each  { |p|
+      sub_assemblies.push(p['sub_assembly']) 
+    }
+
+    # Make sure there is only one of each sub_assembly.
+    sub_assemblies = sub_assemblies.uniq
+
+    # Create a blank hash to put grouped parts into.
+    grouped_parts = {}
+
+    # Create a new list of hashes that represent the sub_assembly and then the parts 
+    # that are of that sub_assembly.
+    sub_assemblies.each { |s| 
+      grouped_parts[s] = []
+    }
+
+    # Loop through each part, adding it to the right key in the grouped_parts.
+    all_parts.each { |p| 
+
+     # Go through the list of sub_assemblys.
+     sub_assemblies.each { |s|
+
+        if p['sub_assembly'] == s
+          
+          # If there is already a key that equals the sub_assembly, add the part
+          # to the existing value. This happens if there is already a hash 
+          # key/value for the given sub_assembly.
+          if grouped_parts[s]
+            grouped_parts[s] += [p]
+          # If there is not a key that equals the sub_assembly, create a new 
+          # hash key for the sub assembly and add the part to it. This happens 
+          # the first time a parts sub_assembly equals the the sub_assembly in 
+          # the list of sub_assemblys.
+          else
+            grouped_parts[s] = [p]
+          end
+
+        end
+
+      }
+
+    }
     
+    grouped_parts.each { |s|
+      
+      # Create a heading for each sub_assembly.
+      data += section_heading("#{s[0]}")
+      
+      # Create an empty array of parts for each sub_asembly.
+      parts_array = []
+      
+      # Go through the list of parts for each sub_assembly
+      s[1].each { |part|
+            
+        # Check if part is a sheet good.
+        if @options["show_sheets"] && part['is_sheet']
+
+          parts_array.push(part)
+
+        end
+
+        # Check if part is solid stock.
+        if @options["show_solids"] && part['is_solid']
+
+          parts_array.push(part)
+
+        end
+
+        # Check if part is hardware.
+        if @options["show_hardware"] && part['is_hardware']
+
+          parts_array.push(part)
+
+        end
+          
+      }
+      
+      # Add the array of parts to the data for the cut list.
+      data += rows(parts_array)
+      
+    }
     
     
     
