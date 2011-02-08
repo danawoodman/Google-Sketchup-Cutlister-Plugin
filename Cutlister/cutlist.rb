@@ -32,6 +32,7 @@ class Cutlist
     
   end
   
+  # TODO: Make these attr_accessor?
   # Add a display name property for displaying in the web dialog UI.
   def self.display_name
     
@@ -253,15 +254,22 @@ class BatchedCutlist < Cutlist
      materials.each { |m|
 
         if p['material'] == m
-
+          
+          # If the "round_dimensions" setting is on, round the dimension to 
+          # three decimal places so we don't have a lot of entries in the 
+          # grouped_parts list like "3.750000001", "3.750000002", etc... but 
+          # instead have one entry like "3.750". This way grouping behaves 
+          # as expected.
+          rounded_thickness = @options['round_dimensions'] ? format("%0.3f", p['thickness']).to_f : p['thickness']
+          
           # Check to see if there is a key for this thickness and if there is 
           # append the part to the array of parts.
-          if grouped_parts[m][p['thickness']]
-            grouped_parts[m][p['thickness']] += [p]
+          if grouped_parts[m][rounded_thickness]
+            grouped_parts[m][rounded_thickness] += [p]
           # If there isn't a key for this thickness, create it now and add the 
           # part array.
           else
-            grouped_parts[m][p['thickness']] = [p]
+            grouped_parts[m][rounded_thickness] = [p]
           end
 
         end
@@ -285,8 +293,6 @@ class BatchedCutlist < Cutlist
 
       # Go through each thickness key.
       parts_by_thickness.each { |p| # p for parts
-        # TODO: Apply dimensioning here...
-        data += section_heading("#{p[0].to_fraction} #{t[0]}")
 
         # Sort parts by width, then length.
         parts = p[1].sort { |a,b|
@@ -303,31 +309,30 @@ class BatchedCutlist < Cutlist
           
           # Check if part is a sheet good.
           if @options["show_sheets"] && part['is_sheet']
-
             parts_array.push(part)
-
           end
 
           # Check if part is solid stock.
           if @options["show_solids"] && part['is_solid']
-
             parts_array.push(part)
-
           end
 
           # Check if part is hardware.
           if @options["show_hardware"] && part['is_hardware']
-
             parts_array.push(part)
-
           end
           # puts "#{p['sub_assembly']} -- #{p['part_name']} -- #{p['quantity']} -- #{p['material']} -- Sheet? #{p['is_sheet']} -- Solid? #{p['is_solid']} -- Hardware? #{p['is_hardware']} -- #{p['width']} x #{p['length']} x #{p['thickness']}"
         
         }
         
-        data += rows(parts_array)
+        # If there are items in the parts_array, then add the section heading 
+        # and the array of parts. If there are no parts, show nothing.
+        if parts_array.length != 0
+          data += section_heading("#{p[0].to_fraction(true)} #{t[0]}")
+          data += rows(parts_array)
+        end
         
-        # TODO: Put section footer here, if needed
+        # TODO: Put section footer here, if needed...
         
       }
     }
