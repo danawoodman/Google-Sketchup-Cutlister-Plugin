@@ -246,6 +246,7 @@ class ToolWebUI < WebUI
         "show_hardware" => result_hash['hardware'].to_s == "on" ? true : false,
         "sheet_materials" => result_hash['sheet_materials'].to_a,
         "solid_materials" => result_hash['solid_materials'].to_a,
+        "round_dimensions" => result_hash['round_dimensions'].to_s == "on" ? true : false,
       }
       
       puts "[ToolWebUI.add_callbacks('handle_run')] options: #{options}" if $debug
