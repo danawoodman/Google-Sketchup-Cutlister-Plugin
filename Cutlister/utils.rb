@@ -1,6 +1,7 @@
 # Some utility definitions of a general scope.
 
-# Extends class Class with a method for finding subclasses of the class.
+# Extends class Class with a method for finding subclasses of the class. This 
+# is used to populate the output and renderer lists in the Cutlister UI.
 class Class
   
   def subclasses
@@ -21,28 +22,28 @@ class Class
 end
 
 
-# add a method to return if the current model units is metric
-def metricModel? 
+# # add a method to return if the current model units is metric
+# def metricModel? 
+#   
+#   model = Sketchup.active_model
+# 
+#   # Get the length Units of the active model from the unitsOptions
+#   # 0=inches,1=feet,2=mm,3=cm,4=m
+#   unit = model.options["UnitsOptions"]["LengthUnit"]
+#   
+#   return !(unit == 0 || unit == 1)
+#   
+# end
   
-  model = Sketchup.active_model
-
-  # Get the length Units of the active model from the unitsOptions
-  # 0=inches,1=feet,2=mm,3=cm,4=m
-  unit = model.options["UnitsOptions"]["LengthUnit"]
-  
-  return !(unit == 0 || unit == 1)
-  
-end
-  
-def modelInMeters?
-  
-  model = Sketchup.active_model
-  
-  unit = model.options["UnitsOptions"]["LengthUnit"]
-  
-  return unit == 4
-  
-end
+# def modelInMeters?
+#   
+#   model = Sketchup.active_model
+#   
+#   unit = model.options["UnitsOptions"]["LengthUnit"]
+#   
+#   return unit == 4
+#   
+# end
   
 # Extends class Float to provide rounding to x digits
 class Float
@@ -71,35 +72,35 @@ class Float
       
       when 0 then ''  # No fraction...
       
-      when 1.0 / 2 then '1/2'  # One half
+      when 1.0 / 2 then ' 1/2'  # One half
       
-      when 1.0 / 4 then '1/4'  # One quarter
-      when 3.0 / 4 then '3/4'  # Three quarters
+      when 1.0 / 4 then ' 1/4'  # One quarter
+      when 3.0 / 4 then ' 3/4'  # Three quarters
     
-      when 1.0 / 3 then '1/3'  # One third
-      when 2.0 / 3 then '2/3'  # Two thirds
+      when 1.0 / 3 then ' 1/3'  # One third
+      when 2.0 / 3 then ' 2/3'  # Two thirds
       
-      when 1.0 / 5 then '1/5'  # One fifth
-      when 2.0 / 5 then '2/5'  # Two fifths
-      when 3.0 / 5 then '3/5'  # Three fifths
-      when 4.0 / 5 then '4/5'  # Four fifths
+      when 1.0 / 5 then ' 1/5'  # One fifth
+      when 2.0 / 5 then ' 2/5'  # Two fifths
+      when 3.0 / 5 then ' 3/5'  # Three fifths
+      when 4.0 / 5 then ' 4/5'  # Four fifths
 
-      when 1.0 / 6 then '1/6'  # One sixth
-      when 5.0 / 6 then '5/6'  # Five sixths
+      when 1.0 / 6 then ' 1/6'  # One sixth
+      when 5.0 / 6 then ' 5/6'  # Five sixths
 
-      when 1.0 / 8 then '1/8'  # One eighth
-      when 3.0 / 8 then '3/8'  # Three eighths
-      when 5.0 / 8 then '5/8'  # Five eighths
-      when 7.0 / 8 then '7/8'  # Seven eighths
+      when 1.0 / 8 then ' 1/8'  # One eighth
+      when 3.0 / 8 then ' 3/8'  # Three eighths
+      when 5.0 / 8 then ' 5/8'  # Five eighths
+      when 7.0 / 8 then ' 7/8'  # Seven eighths
 
-      when 1.0 / 16 then '1/16'  # One sixteenth
-      when 3.0 / 16 then '3/16'  # Three sixteenths
-      when 5.0 / 16 then '5/16'  # Five sixteenths
-      when 7.0 / 16 then '7/16'  # Seven sixteenths
-      when 9.0 / 16 then '9/16'  # Nine sixteenths
-      when 11.0 / 16 then '11/16'  # Eleven sixteenths
-      when 13.0 / 16 then '13/16'  # Thirteen sixteenths
-      when 15.0 / 16 then '15/16'  # Seventeen sixteenths
+      when 1.0 / 16 then ' 1/16'  # One sixteenth
+      when 3.0 / 16 then ' 3/16'  # Three sixteenths
+      when 5.0 / 16 then ' 5/16'  # Five sixteenths
+      when 7.0 / 16 then ' 7/16'  # Seven sixteenths
+      when 9.0 / 16 then ' 9/16'  # Nine sixteenths
+      when 11.0 / 16 then ' 11/16'  # Eleven sixteenths
+      when 13.0 / 16 then ' 13/16'  # Thirteen sixteenths
+      when 15.0 / 16 then ' 15/16'  # Seventeen sixteenths
         
     end
     
@@ -109,14 +110,20 @@ class Float
         when -1 then '-'
         when  0 then ''
         else self.to_i.to_s
-          end
-      "#{body} #{fraction}"
+      end
+      
+      "#{body}#{fraction}"
       
     else
       
       if round_dimensions
         
-        "#{format("%0.2f", self).to_s}"
+        # Send the rounded dimension through the to_fraction method again, 
+        # but this time have the rounded_dimensions setting be set to false 
+        # so that it doesn't infinitely recurse if it cannot be converted to 
+        # a fraction.
+        f = format("%0.3f", self).to_f.to_fraction(false)
+        "#{f.to_s}"
         
       else
         
@@ -132,37 +139,37 @@ class Float
     
     fraction = case self.abs % 1.0
       
-      when 0 then '&rdquo;'  # No fraction...
+      when 0 then ''  # No fraction...
       
-      when 1.0 / 2 then '&frac12;&rdquo;'  # One half
-      
-      when 1.0 / 4 then '&frac14;&rdquo;'  # One quarter
-      when 3.0 / 4 then '&frac34;&rdquo;'  # Three quarters
-    
-      when 1.0 / 3 then '&#x2153;&rdquo;'  # One third
-      when 2.0 / 3 then '&#x2154;&rdquo;'  # Two thirds
-      
-      when 1.0 / 5 then '&#x2155;&rdquo;'  # One fifth
-      when 2.0 / 5 then '&#x2156;&rdquo;'  # Two fifths
-      when 3.0 / 5 then '&#x2157;&rdquo;'  # Three fifths
-      when 4.0 / 5 then '&#x2158;&rdquo;'  # Four fifths
+      when 1.0 / 2 then ' &frac12;'  # One half
+                                  
+      when 1.0 / 4 then ' &frac14;'  # One quarter
+      when 3.0 / 4 then ' &frac34;'  # Three quarters
+                                  
+      when 1.0 / 3 then ' &#x2153;'  # One third
+      when 2.0 / 3 then ' &#x2154;'  # Two thirds
+                                  
+      when 1.0 / 5 then ' &#x2155;'  # One fifth
+      when 2.0 / 5 then ' &#x2156;'  # Two fifths
+      when 3.0 / 5 then ' &#x2157;'  # Three fifths
+      when 4.0 / 5 then ' &#x2158;'  # Four fifths
+                                  
+      when 1.0 / 6 then ' &#x2159;'  # One sixth
+      when 5.0 / 6 then ' &#x215A;'  # Five sixths
+                                  
+      when 1.0 / 8 then ' &#x215B;'  # One eighth
+      when 3.0 / 8 then ' &#x215C;'  # Three eighths
+      when 5.0 / 8 then ' &#x215D;'  # Five eighths
+      when 7.0 / 8 then ' &#x215E;'  # Seven eighths
 
-      when 1.0 / 6 then '&#x2159;&rdquo;'  # One sixth
-      when 5.0 / 6 then '&#x215A;&rdquo;'  # Five sixths
-
-      when 1.0 / 8 then '&#x215B;&rdquo;'  # One eighth
-      when 3.0 / 8 then '&#x215C;&rdquo;'  # Three eighths
-      when 5.0 / 8 then '&#x215D;&rdquo;'  # Five eighths
-      when 7.0 / 8 then '&#x215E;&rdquo;'  # Seven eighths
-
-      when 1.0 / 16 then '<sup>1</sup>&frasl;<sub>16</sub>&rdquo;'  # One sixteenth
-      when 3.0 / 16 then '<sup>3</sup>&frasl;<sub>16</sub>&rdquo;'  # Three sixteenths
-      when 5.0 / 16 then '<sup>5</sup>&frasl;<sub>16</sub>&rdquo;'  # Five sixteenths
-      when 7.0 / 16 then '<sup>7</sup>&frasl;<sub>16</sub>&rdquo;'  # Seven sixteenths
-      when 9.0 / 16 then '<sup>9</sup>&frasl;<sub>16</sub>&rdquo;'  # Nine sixteenths
-      when 11.0 / 16 then '<sup>11</sup>&frasl;<sub>16</sub>&rdquo;'  # Eleven sixteenths
-      when 13.0 / 16 then '<sup>13</sup>&frasl;<sub>16</sub>&rdquo;'  # Thirteen sixteenths
-      when 15.0 / 16 then '<sup>15</sup>&frasl;<sub>16</sub>&rdquo;'  # Seventeen sixteenths
+      when 1.0 / 16 then ' <sup>1</sup>&frasl;<sub>16</sub>'  # One sixteenth
+      when 3.0 / 16 then ' <sup>3</sup>&frasl;<sub>16</sub>'  # Three sixteenths
+      when 5.0 / 16 then ' <sup>5</sup>&frasl;<sub>16</sub>'  # Five sixteenths
+      when 7.0 / 16 then ' <sup>7</sup>&frasl;<sub>16</sub>'  # Seven sixteenths
+      when 9.0 / 16 then ' <sup>9</sup>&frasl;<sub>16</sub>'  # Nine sixteenths
+      when 11.0 / 16 then ' <sup>11</sup>&frasl;<sub>16</sub>'  # Eleven sixteenths
+      when 13.0 / 16 then ' <sup>13</sup>&frasl;<sub>16</sub>'  # Thirteen sixteenths
+      when 15.0 / 16 then ' <sup>15</sup>&frasl;<sub>16</sub>'  # Seventeen sixteenths
         
     end
     
@@ -174,13 +181,18 @@ class Float
         else self.to_i.to_s
       end
       
-      "#{body} #{fraction}"
+      "#{body}#{fraction}&rdquo;"
       
     else
       
       if round_dimensions
         
-        "#{format("%0.2f", self).to_s}&rdquo;"
+        # Send the rounded dimension through the to_html_fraction method again, 
+        # but this time have the rounded_dimensions setting be set to false 
+        # so that it doesn't infinitely recurse if it cannot be converted to 
+        # a fraction.
+        f = format("%0.3f", self).to_f.to_html_fraction(false)
+        "#{f.to_s}"
         
       else
         
@@ -225,15 +237,15 @@ class String
   #   self.gsub(/[']/,"")
   # end
   
-  # remove the mm notation ie :"mm"
-  def no_cm
-    self.gsub(/[mm]/,"")
-  end
+  # # remove the mm notation ie :"mm"
+  # def no_cm
+  #   self.gsub(/[mm]/,"")
+  # end
   
-  # remove the cm notation ie : "cm"
-  def no_mm
-    self.gsub(/[cm]/,"")
-  end
+  # # remove the cm notation ie : "cm"
+  # def no_mm
+  #   self.gsub(/[cm]/,"")
+  # end
 
   # cut list plus doesn't like inch character " for inch dimensions on import - these must be
   # escaped by doubling them up
@@ -241,26 +253,26 @@ class String
   # mm characters "mm" are interpreted ok
   # cm characters "cm" are interpreted ok
   # units in m are not allowed, so these must be converted prior to this
-  def to_clp
-    val = self.gsub(/["]/,"\"\"")
-    #val = val.gsub(/[~]/,"")
-  end
+  # def to_clp
+  #   val = self.gsub(/["]/,"\"\"")
+  #   #val = val.gsub(/[~]/,"")
+  # end
 
-  # cremove the '~' for csv text whether it is straight csv or csv for CLP
-  def to_csv
-    val = self.gsub(/[~]/,"")
-  end
+  # # cremove the '~' for csv text whether it is straight csv or csv for CLP
+  # def to_csv
+  #   val = self.gsub(/[~]/,"")
+  # end
 
   #csv files may require units to be removed so provide a way of doing this
   # when measurements are not accurate, SU generates a ~, remove those as well
-  def no_Units
-    val = self.no_inch
-    val = val.no_foot
-    val = val.no_cm
-    val = val.no_mm
-    val = val.gsub(/[~]/,"")
-    return val
-  end
+  # def no_Units
+  #   val = self.no_inch
+  #   val = val.no_foot
+  #   val = val.no_cm
+  #   val = val.no_mm
+  #   val = val.gsub(/[~]/,"")
+  #   return val
+  # end
 
 end
 
