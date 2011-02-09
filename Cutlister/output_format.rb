@@ -26,7 +26,7 @@ class OutputFormat
     
     if model_path == ""
       
-      # TODO: Have this notify the user VIA the UI instead of a pop-up
+      # TODO: Have this notify the user via the UI instead of a pop-up
       UI.beep
       UI.messagebox("You must save your file before creating a cut list of it!\nNo cut list was generated.")
       

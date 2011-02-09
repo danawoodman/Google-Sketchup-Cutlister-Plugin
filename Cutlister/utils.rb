@@ -22,6 +22,41 @@ class Class
 end
 
 
+class Array
+  
+  # def to_h
+  #   Hash[*self.collect { |v|
+  #       [v, v*2]
+  #   }.flatten]
+  # end
+  
+  # Create a unique array from an array of hashes.
+  # 
+  # Since Ruby 1.8.5 does not support .uniq/.uniq! on an array of hashes, we 
+  # have to hack this to make it work.
+  def uniq_hash_array!
+    
+    if self.length == 0
+      return nil
+    end
+    
+    discard = [] 
+    self.each_with_index { |element, i| 
+       if (self.rindex(element) != i) then discard.unshift(i) end 
+    } 
+    discard.each { |d| self.delete_at(d) }
+    
+    self
+    
+  end
+  
+  def uniq_hash_array
+    new_array = self
+    new_array.uniq_hash_array!
+  end
+  
+end
+
 # # add a method to return if the current model units is metric
 # def metricModel? 
 #   

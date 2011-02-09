@@ -96,14 +96,55 @@ class PartList
   
   def all
     
-    to_hash(@parts)
+    parts = to_hash(@parts)
+    
+    # For each part, set the quantity to 1 (since we are not grouping them).
+    parts.each { |p|
+      p['quantity'] = 1
+    }
+    
+    parts
     
   end
   
+  # Returns all the parts in a hash that has all duplicate parts removed.
   def grouped
     
-    # Go through parts grouping similar parts, increasing their quantity.
-    to_hash(@parts)
+    # Get a hash of the parts.
+    parts = to_hash(@parts)
+    
+    # Create a list that has all the unique parts by first cloning the list 
+    # of parts and then grabbing all the unique values.
+    unique_parts = Marshal.load(Marshal.dump(parts))
+    unique_parts.uniq_hash_array!
+
+    # Compare the full parts list to the unique parts list, increasing the 
+    # quantity of a part by 1 each time a duplicate is found.
+    if unique_parts
+      
+      parts.each { |p|
+        unique_parts.each { |u|
+          # We compare the fields of the two parts to make sure they are the same. 
+          # We don't need to compare all the values such as area or volume as they
+          # are calculated off of the thickness/width/length.
+          if u['sub_assembly'] == p['sub_assembly'] && u['part_name'] == p['part_name'] &&
+                    u['material'] == p['material'] && u['thickness'] == p['thickness'] && 
+                    u['width'] == p['width'] && u['length'] == p['length']
+            u['quantity'] += 1
+          end
+        }
+      }
+
+      # Return the list of unique parts, with their incremented quantity values.
+      unique_parts
+      
+    else
+      
+      # If there are no unique parts, that means every part is seperate and 
+      # there are no duplicates, so we can just return the original list of parts.
+      parts
+      
+    end
     
   end
   
@@ -111,22 +152,23 @@ class PartList
   def to_hash(parts_array)
     
     parts_array.collect! { |p| 
-      {
-          'sub_assembly' => p.sub_assembly,
-          'part_name' => p.part_name,
-          'quantity' => p.quantity,
-          'material' => p.material,
-          'is_sheet' => p.is_sheet,
-          'is_solid' => p.is_solid,
-          'is_hardware' => p.is_hardware,
-          'thickness' => p.thickness,
-          'width' => p.width,
-          'length' => p.length,
-          'area' => p.area,
-          'volume' => p.volume,
-          'square_feet' => p.square_feet,
-          'board_feet' => p.board_feet,
-        }
+      # {
+      #   'sub_assembly' => p.sub_assembly,
+      #   'part_name' => p.part_name,
+      #   'quantity' => p.quantity,
+      #   'material' => p.material,
+      #   'is_sheet' => p.is_sheet,
+      #   'is_solid' => p.is_solid,
+      #   'is_hardware' => p.is_hardware,
+      #   'thickness' => p.thickness,
+      #   'width' => p.width,
+      #   'length' => p.length,
+      #   'area' => p.area,
+      #   'volume' => p.volume,
+      #   'square_feet' => p.square_feet,
+      #   'board_feet' => p.board_feet,
+      # }
+      p.to_hash
     }
     
   end
@@ -151,7 +193,7 @@ class PartList
   # We set sub_assembly_name to "N/A" as a default because if a part is cut 
   # listed that does not have a parent group/component, then it does not have a
   # sub assembly name to use. 
-  def get_parts(parts, sub_assembly_name = "N/A")
+  def get_parts(parts, sub_assembly_name="N/A")
     
     puts "[PartList.get_parts] Getting parts...\n\n" if $debug
     puts "[PartList.get_parts] sub_assembly_name: #{sub_assembly_name}\n\n" if $debug
@@ -309,197 +351,6 @@ class PartList
     
   end
   
-  # REMOVE:
-  def getSubComponents(entityList, level, subAssemblyName)
-    
-    levelHasComponents = false
-    
-    for c in entityList
-      
-      inSelection = selection.contains? c
-      
-      # Sub components do not appear as part of the selection so let them 
-      # through but only look at visible sub-components
-      if (inSelection || level>1) && c.layer.visible?
-        
-        if c.typename == "ComponentInstance" || c.typename == "Group"
-          # Get the name of the component or group or try the inferred name 
-          # based on its parent if it is a group with no name.
-          compName = nil
-          
-          if c.typename == "ComponentInstance"
-            compName = c.definition.name
-            puts "ComponentInstance with definition name: " + compName.to_s if $verboseComponentDiscovery
-          
-          elsif c.typename == "Group"
-            compName = c.name
-            puts "Group with name: " + compName.to_s if $verboseComponentDiscovery
-            
-            if compName == nil || compName == ""
-              # Let's see if this is a copy of a group which might already 
-              # have a name.
-              compName = getGroupCopyName(c)
-              
-              if compName != nil && compName != ""
-                puts "Group had no name but is assigned name '" + compName.to_s + "' based on its parent." if $verboseComponentDiscovery
-              end
-              
-            end
-            
-          end
-        
-          # Get the material name for this part.
-          partMaterialClass = c.material
-          
-          if partMaterialClass == nil
-            partMaterial = getMaterial(c)
-          else
-            partMaterial = partMaterialClass.name
-          end
-          
-          # Compare the "part" words entered by the user to the entity name 
-          # or to the material name to find the non-cutlisted parts.
-          # 
-          # If this is a hardware part, then we are done with this part.
-          if isPartOrSheet( @@options[:cutlist_Options][:partWords], partMaterial ) || isPartOrSheet( @@options[:cutlist_Options][:partWords], compName )
-            @partList.add(compName)
-            puts "Adding part name " + compName.to_s + " (level: " + level.to_s  + ") as a hardware part since material or name matched."  if $verboseComponentDiscovery
-            # Since a part was added, mark this level as having components.
-            levelHasComponents = true
-            next # Move on to the next part at this level.
-          end
-          
-          # If it is not a hardware part, then for this component or group, 
-          # go a level deeper to see if it has sub-components.
-          subList = nil
-          if c.typename == "ComponentInstance"
-            subList = c.definition.entities
-          elsif c.typename == "Group"
-            subList = c.entities
-          end
-          
-          # Go one level deeper if we found a type of part that might have 
-          # sub-parts which we want to add to our list.
-          # 
-          # Note: this calls itself recursively until there are no 
-          # sub-components at the particular level we are looking at.
-          # 
-          # compName is the name of the current part which we are exploring 
-          # to a deeper level (e.g. the subassembly name).
-          # 
-          # Even if this part is ultimtely not added (because it has 
-          # sub-conponents) we can record which sub-assembly it belongs to 
-          # its child parts.
-          hasSubComponents = getSubComponents(subList, level+1, compName) 
-          
-          if !hasSubComponents
-            puts "Adding part name '" + compName.to_s + "' (sub-assembly: " + subAssemblyName.to_s + ", level:" + level.to_s  + ", since level:" + (level + 1).to_s + ", has no sub-components)." if $verboseComponentDiscovery
-            # Allows names with - + at start etc
-            name = " " + compName
-            
-            # If no name is given generate one based on size so that same 
-            # size unnamed object get grouped together.
-            if name == " "
-              name = "noname"
-            end 
-
-            materialClass = c.material
-            if materialClass == nil
-              material = getMaterial(c)
-            else
-              material = materialClass.name
-            end
-
-            # Compare the "sheet" words entered by the user against the 
-            # material name. 
-            # 
-            # If there is a match then this selected entity 
-            # becomes a sheet good object.
-            # 
-            # Everything else is a solid part.
-            if isPartOrSheet(@@options[:cutlist_Options][:sheetWords], material) || isPartOrSheet(@@options[:cutlist_Options][:sheetWords], name)
-              sheetPart = SheetPart.new(c, name, subAssemblyName, material, 
-                                        @volumeMeasureInMetric)
-              # Add it to the sheet parts list.
-              @sheetPartList.add(sheetPart)
-            else
-              solidPart = SolidPart.new(c,
-                                        name, 
-                                        subAssemblyName, 
-                                        material, 
-                                        @@options[:layout_Options][:nominalMargin], 
-                                        @quarter,
-                                        @@options[:layout_Options][:nominalOut], 
-                                        @volumeMeasureInMetric)
-              # Add it to the solid parts list.
-              @solidPartList.add( solidPart )
-            end
-          else
-            puts "Skipping partname '" + compName.to_s + "' (level:" + level.to_s  + ", since level=" + (level + 1).to_s + ", has subcomponents)." if $verboseComponentDiscovery
-          end
-          
-          # If the level below had no sub-components, then we just add this 
-          # part at this level, so mark this level as having components.
-          # 
-          # If the level below us had subcomponents, then so must this one 
-          # by transitiveness, even if none specifically existed at this level 
-          # (there could be nested top level components), so in either case we 
-          # set the level to have components.
-          levelHasComponents = true
-          
-        end
-      end
-    end
-    
-    puts "returning levelHasSubcomponents=" + levelHasComponents.to_s + " for level=" + level.to_s if $verboseComponentDiscovery
-    
-    return levelHasComponents
-    
-  end
-  
-  # REMOVE:
-  def getGroupCopyName(entity)
-    name = ""
-    definitions = Sketchup.active_model.definitions
-    definitions.each { |definition|
-      definition.instances.each { |instance|
-        
-        if instance.typename == "Group" && instance == entity
-          # Now go through this definition and see if there is an instance 
-          # with a name, return it if found.
-          definition.instances.each { |i|
-            
-            if i.name != ""
-              name = i.name
-              # Now let's do it again but actually set the name of all 
-              # instances to the one found if user OKs this.
-              if @askFirstTime
-                if UI.messagebox("Copied group parts found with no name. Ok to set to the same name as the master copy?",  MB_OKCANCEL) == 1
-                  @okToCopyName = true
-                else
-                  @okToCopyName = false
-                end
-                @askFirstTime = false
-              end
-              if @okToCopyName
-                definition.instances.each { |i| i.name = name }
-              end
-              break
-            end
-            
-          }
-          
-          return name
-          
-        end
-        
-      }
-    }
-    
-    return name
-    
-  end
-  
   # Returns true if there are no parts, false if there are parts.
   def empty?
     
@@ -535,6 +386,7 @@ class Part
     @is_sheet = is_sheet
     @is_solid = is_solid
     @is_hardware = is_hardware
+    @quantity = 0
         
     # Find the bounding box for the part.
     boundingBox = entity.bounds
@@ -597,6 +449,26 @@ class Part
     # @metric = metricModel?
     # @locationOnBoard = nil
     
+  end
+  
+  # 
+  def to_hash
+    {
+      'sub_assembly' => self.sub_assembly,
+      'part_name' => self.part_name,
+      'quantity' => self.quantity,
+      'material' => self.material,
+      'is_sheet' => self.is_sheet,
+      'is_solid' => self.is_solid,
+      'is_hardware' => self.is_hardware,
+      'thickness' => self.thickness,
+      'width' => self.width,
+      'length' => self.length,
+      'area' => self.area,
+      'volume' => self.volume,
+      'square_feet' => self.square_feet,
+      'board_feet' => self.board_feet,
+    }
   end
 
   # def dimension_calculations
