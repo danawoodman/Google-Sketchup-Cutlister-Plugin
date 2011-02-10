@@ -4,7 +4,7 @@ class PartList
     
     @model = model
     @selection = selection
-    options = options
+    @options = options
     @parts = []
     
     # Look through the options and get the sheet_materials and solid_materials lists.
@@ -127,9 +127,12 @@ class PartList
           # We compare the fields of the two parts to make sure they are the same. 
           # We don't need to compare all the values such as area or volume as they
           # are calculated off of the thickness/width/length.
-          if u['sub_assembly'] == p['sub_assembly'] && u['part_name'] == p['part_name'] &&
-                    u['material'] == p['material'] && u['thickness'] == p['thickness'] && 
-                    u['width'] == p['width'] && u['length'] == p['length']
+          if u['sub_assembly'] == p['sub_assembly'] and 
+                u['part_name'] == p['part_name'] and 
+                u['material'] == p['material'] and 
+                u['thickness'] == p['thickness'] and 
+                u['width'] == p['width'] and 
+                u['length'] == p['length']
             u['quantity'] += 1
           end
         }
@@ -193,9 +196,9 @@ class PartList
   # We set sub_assembly_name to "N/A" as a default because if a part is cut 
   # listed that does not have a parent group/component, then it does not have a
   # sub assembly name to use. 
-  def get_parts(parts, sub_assembly_name="N/A")
+  def get_parts(selection, sub_assembly_name="N/A")
     
-    puts "[PartList.get_parts] Getting parts...\n\n" if $debug
+    puts "[PartList.get_parts] Getting entities...\n\n" if $debug
     puts "[PartList.get_parts] sub_assembly_name: #{sub_assembly_name}\n\n" if $debug
     
     # parts_array = []
@@ -203,10 +206,10 @@ class PartList
     level_has_parts = false
     
     # Collect all the parts that are components or groups and add them to `array`.
-    parts.each { |p| 
+    selection.each { |s| 
       
       # Only cut list components or groups.
-      if (p.typename == "ComponentInstance" || p.typename == "Group") && p.layer.visible?
+      if (s.typename == "ComponentInstance" || s.typename == "Group") && s.layer.visible?
         
         # Set default values...
         is_sheet = false
@@ -217,26 +220,22 @@ class PartList
         
         # If the part is a Component, get it's name, material and sub parts 
         # based on it's "definition".
-        if p.typename == "ComponentInstance"
+        if s.typename == "ComponentInstance"
           
-          part_name = p.definition.name
-          
-          sub_parts = p.definition.entities
-          
-          material = p.definition.material
+          part_name = s.definition.name
+          sub_parts = s.definition.entities
+          material = s.definition.material
           
           puts "[PartList.get_parts] (ComponentInstance) part_name: #{part_name}" if $debug
           puts "[PartList.get_parts] (ComponentInstance) sub_parts: #{sub_parts}\n\n" if $debug
         
         # If the part is a Group, get it's name, material and sub parts 
         # based on it's property methods.
-        elsif p.typename == "Group"
+        elsif s.typename == "Group"
           
-          part_name = p.name
-          
-          sub_parts = p.entities
-          
-          material = p.material
+          part_name = s.name
+          sub_parts = s.entities
+          material = s.material
           
           puts "[PartList.get_parts] (Group) part_name: #{part_name}" if $debug
           puts "[PartList.get_parts] (Group) sub_parts: #{sub_parts}\n\n" if $debug
@@ -314,7 +313,7 @@ class PartList
           puts "[PartList.get_parts] Part does not have sub_parts...\n\n" if $debug
           
           # Create a new part.
-          part = Part.new(p, sub_assembly_name, part_name, material, is_sheet, is_solid, is_hardware)
+          part = Part.new(s, sub_assembly_name, part_name, material, is_sheet, is_solid, is_hardware, @options)
 
           # Add the new part to the database of parts.
           add_part(part)
@@ -378,7 +377,8 @@ class Part
                 :square_feet,
                 :board_feet
   
-  def initialize(entity, sub_assembly_name, part_name, material, is_sheet, is_solid, is_hardware)
+  def initialize(entity, sub_assembly_name, part_name, material, is_sheet, 
+                is_solid, is_hardware, options)
     
     @sub_assembly = sub_assembly_name ? sub_assembly_name : 'N/A'
     @part_name = part_name ? part_name : 'N/A'
@@ -387,6 +387,7 @@ class Part
     @is_solid = is_solid
     @is_hardware = is_hardware
     @quantity = 0
+    @options = options
         
     # Find the bounding box for the part.
     boundingBox = entity.bounds
@@ -408,6 +409,12 @@ class Part
     width = boundingBox.width * scale_x
     height = boundingBox.height * scale_y
     depth = boundingBox.depth * scale_z
+    
+    if @options['round_dimensions']
+      width = format("%0.4f", width).to_f
+      height = format("%0.4f", height).to_f
+      depth = format("%0.4f", depth).to_f
+    end
     
     # Get the sorted dimensions
     sizes = get_sorted_array([width, height, depth])
