@@ -157,7 +157,7 @@ class Float
         # but this time have the rounded_dimensions setting be set to false 
         # so that it doesn't infinitely recurse if it cannot be converted to 
         # a fraction.
-        f = format("%0.3f", self).to_f.to_fraction(false)
+        f = format("%0.4f", self).to_f.to_fraction(false)
         "#{f.to_s}"
         
       else
@@ -226,7 +226,7 @@ class Float
         # but this time have the rounded_dimensions setting be set to false 
         # so that it doesn't infinitely recurse if it cannot be converted to 
         # a fraction.
-        f = format("%0.3f", self).to_f.to_html_fraction(false)
+        f = format("%0.4f", self).to_f.to_html_fraction(false)
         "#{f.to_s}"
         
       else
