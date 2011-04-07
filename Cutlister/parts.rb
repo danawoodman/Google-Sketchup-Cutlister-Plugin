@@ -22,19 +22,19 @@ class PartList
     # Go through and collect all the parts in the selection.
     @entities = get_parts(@selection)
     
-    puts "[PartList.initialize] @model: #{@model}" if $debug
-    puts "[PartList.initialize] @selection: #{@selection}" if $debug
-    puts "[PartList.initialize] options: #{options}" if $debug
-    puts "[PartList.initialize] @sheet_materials: #{@sheet_materials}" if $debug
-    puts "[PartList.initialize] @solid_materials: #{@solid_materials}" if $debug
-    puts "[PartList.initialize] @entities: #{@entities}\n\n" if $debug
+    puts "[PartList.initialize] @model: #{@model}" if CUTLISTER_DEBUG
+    puts "[PartList.initialize] @selection: #{@selection}" if CUTLISTER_DEBUG
+    puts "[PartList.initialize] options: #{options}" if CUTLISTER_DEBUG
+    puts "[PartList.initialize] @sheet_materials: #{@sheet_materials}" if CUTLISTER_DEBUG
+    puts "[PartList.initialize] @solid_materials: #{@solid_materials}" if CUTLISTER_DEBUG
+    puts "[PartList.initialize] @entities: #{@entities}\n\n" if CUTLISTER_DEBUG
     
   end
 
   # Return all the sheet good parts.
   def sheets
     
-    puts "[PartList.sheets] Showing sheet parts..." if $debug
+    puts "[PartList.sheets] Showing sheet parts..." if CUTLISTER_DEBUG
 
     part_array = []
     
@@ -55,7 +55,7 @@ class PartList
   # Return all the solid stock parts.
   def solids
     
-    puts "[PartList.solids] Showing solid parts..." if $debug
+    puts "[PartList.solids] Showing solid parts..." if CUTLISTER_DEBUG
     
     part_array = []
     
@@ -76,7 +76,7 @@ class PartList
   # Return all the hardware parts (anything that is not a sheet or solid.)
   def hardware
     
-    puts "[PartList.hardware] Showing hardware parts..." if $debug
+    puts "[PartList.hardware] Showing hardware parts..." if CUTLISTER_DEBUG
 
     part_array = []
     
@@ -198,8 +198,8 @@ class PartList
   # sub assembly name to use. 
   def get_parts(selection, sub_assembly_name="N/A")
     
-    puts "[PartList.get_parts] Getting entities...\n\n" if $debug
-    puts "[PartList.get_parts] sub_assembly_name: #{sub_assembly_name}\n\n" if $debug
+    puts "[PartList.get_parts] Getting entities...\n\n" if CUTLISTER_DEBUG
+    puts "[PartList.get_parts] sub_assembly_name: #{sub_assembly_name}\n\n" if CUTLISTER_DEBUG
     
     # parts_array = []
     
@@ -226,8 +226,8 @@ class PartList
           sub_parts = s.definition.entities
           material = s.definition.material
           
-          puts "[PartList.get_parts] (ComponentInstance) part_name: #{part_name}" if $debug
-          puts "[PartList.get_parts] (ComponentInstance) sub_parts: #{sub_parts}\n\n" if $debug
+          puts "[PartList.get_parts] (ComponentInstance) part_name: #{part_name}" if CUTLISTER_DEBUG
+          puts "[PartList.get_parts] (ComponentInstance) sub_parts: #{sub_parts}\n\n" if CUTLISTER_DEBUG
         
         # If the part is a Group, get it's name, material and sub parts 
         # based on it's property methods.
@@ -237,8 +237,8 @@ class PartList
           sub_parts = s.entities
           material = s.material
           
-          puts "[PartList.get_parts] (Group) part_name: #{part_name}" if $debug
-          puts "[PartList.get_parts] (Group) sub_parts: #{sub_parts}\n\n" if $debug
+          puts "[PartList.get_parts] (Group) part_name: #{part_name}" if CUTLISTER_DEBUG
+          puts "[PartList.get_parts] (Group) sub_parts: #{sub_parts}\n\n" if CUTLISTER_DEBUG
           
           # # TODO: Do we need to include the below code? I believe it is for older
           # # versions of SketchUp...
@@ -250,7 +250,7 @@ class PartList
           #   
           #   if sub_assembly_name != nil && sub_assembly_name != ""
           #     
-          #     puts "[PartList.get_parts] (Group) Group had no name but is assigned the name \"#{sub_assembly_name}\" based on it's parent." if $debug
+          #     puts "[PartList.get_parts] (Group) Group had no name but is assigned the name \"#{sub_assembly_name}\" based on it's parent." if CUTLISTER_DEBUG
           #   
           #   end
           #   
@@ -262,7 +262,7 @@ class PartList
         # set it to "N/A".
         material = material ? material.display_name : "N/A"
 
-        puts "[PartList.get_parts] material: #{material}\n\n" if $debug
+        puts "[PartList.get_parts] material: #{material}\n\n" if CUTLISTER_DEBUG
         
         # Do a case-insensitive search on all the sheet materials to see if the 
         # material matches.
@@ -276,7 +276,7 @@ class PartList
               is_solid = false
               is_hardware = false
               
-              puts "[PartList.get_parts] (#{material}) Sheet part found...\n\n" if $debug
+              puts "[PartList.get_parts] (#{material}) Sheet part found...\n\n" if CUTLISTER_DEBUG
 
             end
 
@@ -296,7 +296,7 @@ class PartList
               is_solid = true
               is_hardware = false
               
-              puts "[PartList.get_parts] (#{material}) Solid part found...\n\n" if $debug
+              puts "[PartList.get_parts] (#{material}) Solid part found...\n\n" if CUTLISTER_DEBUG
 
             end
 
@@ -310,7 +310,7 @@ class PartList
         # then we add it to the list of parts.
         if !sub_parts
           
-          puts "[PartList.get_parts] Part does not have sub_parts...\n\n" if $debug
+          puts "[PartList.get_parts] Part does not have sub_parts...\n\n" if CUTLISTER_DEBUG
           
           # Create a new part.
           part = Part.new(s, sub_assembly_name, part_name, material, is_sheet, is_solid, is_hardware, @options)
@@ -322,7 +322,7 @@ class PartList
         # a group of other parts.
         else
           
-          puts "[PartList.get_parts] Part has sub_parts...\n\n" if $debug
+          puts "[PartList.get_parts] Part has sub_parts...\n\n" if CUTLISTER_DEBUG
           
         end
         
@@ -335,16 +335,16 @@ class PartList
     # If it gets here, than this level has parts.
     level_has_parts
     
-    # puts "[PartList.get_parts] parts_array: #{parts_array}" if $debug
+    # puts "[PartList.get_parts] parts_array: #{parts_array}" if CUTLISTER_DEBUG
     # 
     # # Debug each part...
     # parts_array.each { |p|
     #   
     #   puts "[PartList.get_parts] part: #{p.typename}, #{p.cabinet_name}, #{p.quantity}, #{p.width},  #{p.length}, #{p.thickness}, #{p.material}, #{p.area}, #{p.volume}, #{p.board_feet}, #{p.square_feet}\n"
     #   
-    # } if $debug
+    # } if CUTLISTER_DEBUG
     # 
-    # puts "\n\n" if $debug
+    # puts "\n\n" if CUTLISTER_DEBUG
     # 
     # parts_array # Returns the array of parts.
     
@@ -432,19 +432,19 @@ class Part
     @board_feet = @volume / 144
     
     # Debugging...
-    puts "[Part.initialize] @sub_assembly: #{@sub_assembly}" if $debug
-    puts "[Part.initialize] @part_name: #{@part_name}" if $debug
-    puts "[Part.initialize] @material: #{@material}" if $debug
-    puts "[Part.initialize] @is_sheet: #{@is_sheet}" if $debug
-    puts "[Part.initialize] @is_solid: #{@is_solid}" if $debug
-    puts "[Part.initialize] @is_hardware: #{@is_hardware}" if $debug
-    puts "[Part.initialize] @thickness: #{@thickness}" if $debug
-    puts "[Part.initialize] @width: #{@width}" if $debug
-    puts "[Part.initialize] @length: #{@length}\n\n" if $debug
-    puts "[Part.initialize] @area: #{@area}\n\n" if $debug
-    puts "[Part.initialize] @volume: #{@volume}\n\n" if $debug
-    puts "[Part.initialize] @square_feet: #{@square_feet}\n\n" if $debug
-    puts "[Part.initialize] @board_feet: #{@board_feet}\n\n" if $debug
+    puts "[Part.initialize] @sub_assembly: #{@sub_assembly}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @part_name: #{@part_name}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @material: #{@material}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @is_sheet: #{@is_sheet}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @is_solid: #{@is_solid}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @is_hardware: #{@is_hardware}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @thickness: #{@thickness}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @width: #{@width}" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @length: #{@length}\n\n" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @area: #{@area}\n\n" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @volume: #{@volume}\n\n" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @square_feet: #{@square_feet}\n\n" if CUTLISTER_DEBUG
+    puts "[Part.initialize] @board_feet: #{@board_feet}\n\n" if CUTLISTER_DEBUG
     
     
     # @lengthInFeet = @length.to_feet
@@ -597,7 +597,7 @@ class Part
   # Checks to see if a part is a sheet. Returns true if it is, false if not.
   # def is_sheet
   #   
-  #   puts "[Part.is_sheet]: true\n\n" if $debug
+  #   puts "[Part.is_sheet]: true\n\n" if CUTLISTER_DEBUG
   #   
   #   @is_sheet
   #   # is_sheet = false
@@ -614,7 +614,7 @@ class Part
   #   #       
   #   #     }
   #   #     
-  #   #     puts "[Part.is_sheet]: (#{@material}) #{is_sheet}" if $debug
+  #   #     puts "[Part.is_sheet]: (#{@material}) #{is_sheet}" if CUTLISTER_DEBUG
   #   #     
   #   #     is_sheet
   #   
@@ -623,7 +623,7 @@ class Part
   # # Checks to see if a part is a solid. Returns true if it is, false if not.
   # def is_solid
   #   
-  #   puts "[Part.is_solid]: true\n\n" if $debug
+  #   puts "[Part.is_solid]: true\n\n" if CUTLISTER_DEBUG
   #   
   #   @is_solid
   #   
@@ -641,7 +641,7 @@ class Part
   #   #       
   #   #     }
   #   #     
-  #   #     puts "[Part.is_solid]: (#{@material}) #{is_solid}" if $debug
+  #   #     puts "[Part.is_solid]: (#{@material}) #{is_solid}" if CUTLISTER_DEBUG
   #   #     
   #   #     is_solid
   #   
@@ -650,14 +650,14 @@ class Part
   # # Checks to see if a part is hardware. Returns true if it is, false if not.
   # def is_hardware
   #   
-  #   puts "[Part.is_hardware]: true\n\n" if $debug
+  #   puts "[Part.is_hardware]: true\n\n" if CUTLISTER_DEBUG
   #   
   #   @is_hardware
   #   
   #   # # If the part is not a sheet or a solid, than it is assumed to be hardware.
   #   #     is_hardware = is_sheet && is_solid ? false : true
   #   #     
-  #   #     puts "[Part.is_hardware]: (#{@material}) #{is_hardware}" if $debug
+  #   #     puts "[Part.is_hardware]: (#{@material}) #{is_hardware}" if CUTLISTER_DEBUG
   #   #     
   #   #     is_hardware
   #   

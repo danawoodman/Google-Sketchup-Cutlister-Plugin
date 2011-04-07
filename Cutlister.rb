@@ -1,59 +1,55 @@
-# 
-# =Cutlister
-# 
-# A Google SketchUp plugin to generate customizable part cutlists.
-# 
-# Author::        Dana Woodman (mailto:dana@danawoodman.com)
-# Copyright::     Copyright (c) 2010, Dana Woodman.
-# Licence::       Please see the LICENCE file for licence information.
-# 
-# This file initiates the Cutlister plugin and loads all app files and settings.
+#-----------------------------------------------------------------------------
 #
+# Copyright 2010 Dana Woodman, Phoenix Woodworks. All Rights Reserved.
+#
+# Permission to use, copy, modify, and distribute this software for
+# any purpose and without fee is hereby granted, provided the above
+# copyright notice appear in all copies.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+#-----------------------------------------------------------------------------
+#
+# Name        : Cutlister
+# Based On    : Cutlister by Steve Racz & Dave Richards
+# Type        : Tool
+# Author      : Dana Woodman
+# Email       : <dana@danawoodman.com>
+# Website     : https://github.com/danawoodman/Google-Sketchup-Cutlister-Plugin
+# Blog        : 
+#
+# Maintenance : Please report all bugs or strange behavior to <dana@danawoodman.com>
+#
+# Version     : 1.0
+#
+# Menu Items  : Plugins -> Cutlist Model
+#
+# Toolbar     : Cutlist Material - Includes one large and one small icon.
+#
+# Context-Menu: Cutlist Selection
+#
+# Description : Automates the creating of cut lists for your woodworking project. 
+#             : A cut list is a table of parts used to make up a piece of 
+#             : cabinetry or furniture (such as a door, wall end, back or finished end).
+#
+# To Install  : Place the Cutlister.rb Ruby script and the 
+#             : `Cutlister` directory in the SketchUp Plugins folder.
+#-----------------------------------------------------------------------------
 
 require 'sketchup.rb'
+require 'extensions.rb'
 
 # Toggle whether debugging is on or off ("true" means on, "false" means off).
-$debug = false
+CUTLISTER_VERSION = '1.0'
+CUTLISTER_DEBUG = false
+CUTLISTER_BASE_PATH = File.dirname(__FILE__)
 
-puts "[Cutlister.rb] Debugging is on." if $debug
-
-# Define globals.
-$version = "1.0 beta"
-
-puts "[Cutlister.rb] Version of Cutlister is: #{$version}" if $debug
-
-# Load all the application files.
-load 'Cutlister/utils.rb'
-load 'Cutlister/parts.rb'
-load 'Cutlister/gui.rb'
-load 'Cutlister/renderers.rb'
-load 'Cutlister/output_format.rb'
-load 'Cutlister/cutlist.rb'
-# NOTE: Load your own extensions here:
-load 'Cutlister/extensions/labels.rb'
-
-# Create a GUI instance that prompts for an interactive configuration, 
-# producing the requested output formats.
-def interactive_generator
-  
-  web_ui = ToolWebUI.new()
-  web_ui.show
-  
-end
-
-# Add content menu items, plugin menu item, etc...
-if not file_loaded?("Cutlister.rb")
-  
-  # Add menu item in the "Plugins" main menu drop-down.
-  plugins_menu = UI.menu("Plugins")
-  plugins_menu.add_item("Cutlist Model") { interactive_generator }
-  
-  # Add context click menu item.
-  UI.add_context_menu_handler do |context_menu|
-    context_menu.add_separator
-    context_menu.add_item("Cutlist Selection") { interactive_generator }
-  end
-  
-end
-
-file_loaded("Cutlister.rb")
+# Register plugin as an extension.
+cutlister_extension = SketchupExtension.new "Cutlister", File.join(CUTLISTER_BASE_PATH, "Cutlister/main.rb")
+cutlister_extension.version = CUTLISTER_VERSION
+cutlister_extension.creator = 'Dana Woodman'
+cutlister_extension.copyright = '2010-2011'
+cutlister_extension.description = "Automates the creating of cut lists for your woodworking project. A cut list is a table of parts used to make up a piece of cabinetry or furniture (such as a door, wall end, back or finished end)."
+Sketchup.register_extension cutlister_extension, true

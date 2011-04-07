@@ -124,8 +124,8 @@ class HTMLRenderer < Renderer
   # Add in the HTML page heading.
   def heading(title, opts)
     
-    # Default CSS location.
-    css_location = 'css/html-cutlist.css'
+    # Default CSS location (relative).
+    css_location = "Cutlister/css/html-cutlist.css"
     
     # Check to see if the css_location option was passed to the heading method.
     opts.each { |key, value|
@@ -139,13 +139,13 @@ class HTMLRenderer < Renderer
 
     }
 
-    # Find the support file.
-    css_file_path = Sketchup.find_support_file(css_location.to_s, 'plugins/Cutlister/')
+    # Find the support file (absolute).
+    css_file_path = File.join(CUTLISTER_BASE_PATH, css_location)
     
     css_file_contents = IO.read(css_file_path)
     
-    puts "[HTMLRenderer.heading] css_location: #{css_location}" if $debug
-    puts "[HTMLRenderer.heading] css_file_path: #{css_file_path}" if $debug
+    puts "[HTMLRenderer.heading] css_location: #{css_location}" if CUTLISTER_DEBUG
+    puts "[HTMLRenderer.heading] css_file_path: #{css_file_path}" if CUTLISTER_DEBUG
     
     return <<-EOS
     
@@ -261,7 +261,7 @@ class HTMLRenderer < Renderer
       
       }
       
-      puts "[HTMLRenderer.rows] all_rows: #{all_rows}" if $debug
+      puts "[HTMLRenderer.rows] all_rows: #{all_rows}" if CUTLISTER_DEBUG
       
       html += all_rows.to_s
     
@@ -298,7 +298,7 @@ class HTMLRenderer < Renderer
         val = val.to_html_fraction(@round_dimensions)
       end
 
-      puts "[HTMLRenderer.row] row values: #{f[0]}, #{val}\n\n" if $debug
+      puts "[HTMLRenderer.row] row values: #{f[0]}, #{val}\n\n" if CUTLISTER_DEBUG
       
       html += "<td>#{val.to_s}</td>"
       
@@ -306,7 +306,7 @@ class HTMLRenderer < Renderer
       
     html += "</tr>"
     
-    puts "[HTMLRenderer.row] row html: #{html}" if $debug
+    puts "[HTMLRenderer.row] row html: #{html}" if CUTLISTER_DEBUG
     
     html
     
@@ -459,7 +459,7 @@ class CSVRenderer < Renderer
       
       }
       
-      puts "[CSVRenderer.rows] all_rows: #{all_rows}" if $debug
+      puts "[CSVRenderer.rows] all_rows: #{all_rows}" if CUTLISTER_DEBUG
       
       data += all_rows.to_s
     
@@ -492,7 +492,7 @@ class CSVRenderer < Renderer
       data += "#{val.to_s}"
       data += f == fields.last ? "\n" : ","
 
-      puts "[CSVRenderer.row] row values: #{f[0]}, #{val}\n\n" if $debug
+      puts "[CSVRenderer.row] row values: #{f[0]}, #{val}\n\n" if CUTLISTER_DEBUG
       
     }
     

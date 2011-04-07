@@ -25,10 +25,10 @@ class Cutlist
     @options = options
     @title = title()
     
-    puts "[Cutlist.initialize] @model: #{@model}" if $debug
-    puts "[Cutlist.initialize] @renderer: #{@renderer}" if $debug
-    puts "[Cutlist.initialize] @parts: #{@parts}" if $debug
-    puts "[Cutlist.initialize] @options: #{@options}" if $debug
+    puts "[Cutlist.initialize] @model: #{@model}" if CUTLISTER_DEBUG
+    puts "[Cutlist.initialize] @renderer: #{@renderer}" if CUTLISTER_DEBUG
+    puts "[Cutlist.initialize] @parts: #{@parts.inspect}" if CUTLISTER_DEBUG
+    puts "[Cutlist.initialize] @options: #{@options.inspect}" if CUTLISTER_DEBUG
     
   end
   
@@ -52,7 +52,7 @@ class Cutlist
     
     title = "Cutlist for: #{@model.title}"
     
-    puts "[Cutlist.title]: #{title}" if $debug
+    puts "[Cutlist.title]: #{title}" if CUTLISTER_DEBUG
     
     title
     
@@ -62,11 +62,11 @@ class Cutlist
   # 
   # This is called once at the top of the file and can be used to construct 
   # the page framework or declare doctypes, etc...
-  def heading(title = @title, opts = {})
+  def heading(title = @title, opts={})
     
     heading = @renderer.heading(title, opts)
     
-    puts "[Cutlist.heading]: #{heading}" if $debug
+    puts "[Cutlist.heading]: #{heading}" if CUTLISTER_DEBUG
     
     heading
     
@@ -77,7 +77,7 @@ class Cutlist
     
     page_title = @renderer.title title()
     
-    puts "[Cutlist.page_title]: #{page_title}" if $debug
+    puts "[Cutlist.page_title]: #{page_title}" if CUTLISTER_DEBUG
     
     page_title
     
@@ -120,14 +120,15 @@ class Cutlist
   end
   
   # This is the main cutlist method that constructs the cutlist.
-  # 
+  #  => 67
+  
   # It calls the proper renderer, grabs the formatted content and then 
   # outputs the final formatted cut list data.
   # 
   # If you want a different format, over-ride this class in your sub-class.
   def build
     
-    puts "[Cutlist.build] Building cutlist..." if $debug
+    puts "[Cutlist.build] Building cutlist..." if CUTLISTER_DEBUG
     
     data = heading().to_s
     
@@ -297,6 +298,7 @@ class BatchedCutlist < Cutlist
         # Sort parts by width, then length.
         parts = p[1].sort { |a,b|
           a['width'] <=> b['width']
+          # TODO: Get sub-sorting by length.
           # a['length'] <=> b['length']
         }
         parts.reverse!
