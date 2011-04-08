@@ -14,163 +14,7 @@
         <script type="text/javascript" src="js/jquery.ui-1.8.9.min.js"></script>
         <script type="text/javascript" src="js/jquery.cookie.js"></script>
         <script type="text/javascript" src="js/jquery.pass_to_sketchup.js"></script>
-        <script type="text/javascript">
-        
-            // TODO: Get the population of the select boxes to occur BEFORE the loading of the cookies so they will get changed based on the cookie, as expected...
-            
-            
-            // Add the array of formats to the "Format" select box. 
-            function populate_format_list(array) {
-
-                for (var i=0; i < array.length; i++) {
-
-                    $('#id_format').append($("<option></option>").attr("value", array[i].name).text(array[i].display_name));
-
-                };
-
-            };
-
-            // Add the array of list_types to the "List Type" select box. 
-            function populate_list_types(array) {
-
-                for (var i=0; i < array.length; i++) {
-
-                    $('#id_list_type').append($("<option></option>").attr("value", array[i].name).text(array[i].display_name));
-
-                };
-
-            };
-            
-            // handle_close -- closes the browser window.
-            function handle_close() {
-                
-            	window.location = 'skp:handle_close@x';
-                
-            };
-
-            // // handle_run -- submits the form to the Cutlister plugin.
-            // function handle_run() {
-            // 
-            //     // alert("handle_run activated!" + form);
-            // 
-            //     // Save the settings if the form was submitted...
-            //     // save_settings(form);
-            // 
-            //     // var res = 'skp:handle_run@';
-            //     //                     res = res + "foobar"// get_form_values(form);
-            // 
-            //  window.location = 'skp:handle_run@x'; // res;
-            // 
-            // };
-            
-            // jQuery: DOM load...
-            $(function() {
-
-                $('#tabs').tabs();
-
-                // Define the jQuery selector for the form, to use in the following functions.
-                form = '#cutlist-form';
-
-                // Load settings from cookies.
-                function load_settings(form) {
-
-                    if ($.cookie('format')) {
-                        $('#id_format').val($.cookie('format'));
-                    };
-                    if ($.cookie('list_type')) {
-                        $('#id_list_type').val($.cookie('list_type'));
-                    };
-                    if ($.cookie('sheets') == 'true') {
-                        $('#id_sheets').attr('checked', true);
-                    };
-                    if ($.cookie('solids') == 'true') {
-                        $('#id_solids').attr('checked', true);
-                    };
-                    if ($.cookie('hardware') == 'true') {
-                        $('#id_hardware').attr('checked', true);
-                    };
-                    if ($.cookie('sheet_materials')) {
-                        $('#id_sheet_materials').val($.cookie('sheet_materials'));
-                    };
-                    if ($.cookie('solid_materials')) {
-                        $('#id_solid_materials').val($.cookie('solid_materials'));
-                    };
-                    if ($.cookie('round_dimensions') == 'true') {
-                        $('#id_round_dimensions').attr('checked', true);
-                    };
-
-                };
-
-                // Run the load_settings function to load cookies.
-                load_settings(form);
-
-                // Save the settings into cookies.
-                function save_settings(form) {
-
-                    $.cookie( 'format', $('#id_format').val(), { 'expires': 3650 } );
-                    $.cookie( 'list_type', $('#id_list_type').val(), { 'expires': 3650 } );
-                    $.cookie( 'sheets', $('#id_sheets').attr('checked'), { 'expires': 3650 } );
-                    $.cookie( 'solids', $('#id_solids').attr('checked'), { 'expires': 3650 } );
-                    $.cookie( 'hardware', $('#id_hardware').attr('checked'), { 'expires': 3650 } );
-                    $.cookie( 'sheet_materials', $('#id_sheet_materials').val(), { 'expires': 3650 } );
-                    $.cookie( 'solid_materials', $('#id_solid_materials').val(), { 'expires': 3650 } );
-                    $.cookie( 'round_dimensions', $('#id_round_dimensions').attr('checked'), { 'expires': 3650 } );
-
-                    // options = get_form_values(form);
-                    // 
-                    // // Loop through all the form items and store their name and value into a cookie.
-                    // for (var i=0; i < options.length; i++) {
-                    //     
-                    //     // alert('name: ' + options[i].name + '\nvalue: ' + options[i].value);
-                    //     
-                    //     $.cookie(options[i].name, options[i].value);
-                    //     
-                    // };
-
-                };
-
-                // Returns an array of all form items and their current values.
-                function get_form_values(form) {
-
-                    // Turn all the form items into an array.
-                    form_options = $(form).serializeArray();
-
-                    return form_options;
-
-                };
-                
-                // Bind the handle_close action to the close button.
-                $('#id_close').bind('click', function() {
-
-                    handle_close();
-
-                });
-
-                // Bind the save settings button to the save_settings function.
-                $('#id_save_settings').bind('click', function() {
-
-                    save_settings(form);
-                    // $('#notice-area').html('<p>Your settings have been saved!</p>');
-                    $('#notice-area').fadeIn().delay(2000).fadeOut('slow'); //.html('')
-
-                });
-
-
-                $('#cutlist-form').pass_to_sketchup({
-                    method: 'handle_run'
-                });
-
-                // // Handle the submission of the form.
-                // $('#id_submit').bind('click', function() {
-                // 
-                //     handle_run(); // '#cutlist-form'
-                //     return false;
-                // 
-                // });
-                
-            });
-        
-        </script>
+        <script type="text/javascript" src="js/application.js"></script>
     
     </head>
     <body>
@@ -218,10 +62,18 @@
                             <div class="form-row">
                                 <label for="id_sheet_materials" class="block-label">Sheet Materials</label>
                                 <textarea name="sheet_materials" id="id_sheet_materials"></textarea>
+                                <p class="help-text">
+                                    Comma separated list of material names. Capitalization does not matter.<br />
+                                    Example: "plywood, mdf, prefinished_maple"
+                                </p>
                             </div>
                             <div class="form-row">
                                 <label for="id_solid_materials" class="block-label">Solid Materials</label>
                                 <textarea name="solid_materials" id="id_solid_materials"></textarea>
+                                <p class="help-text">
+                                    Comma separated list of material names. Capitalization does not matter.<br />
+                                    Example: "poplar, mahogany, cedar, walnut"
+                                </p>
                             </div>
                         </div>
                         <div id="settings" class="tab-panel">

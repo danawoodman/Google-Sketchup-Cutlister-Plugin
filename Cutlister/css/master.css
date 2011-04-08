@@ -282,6 +282,13 @@ abbr {
         margin-right: 20px;
         width: 120px;
     }
+    .form-row .help-text {
+        color: #ccc;
+        font-size: 12px;
+        font-style: italic;
+        font-weight: normal;
+        margin: 5px 0;
+    }
     .form-row label.block-label { /* Block level labels */
         float: none;
         margin: 10px 0 5px;

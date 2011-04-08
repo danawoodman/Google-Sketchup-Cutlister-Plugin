@@ -92,7 +92,7 @@ class ToolWebUI < WebUI
     # @selection = @model.selection
     @pref_key = "CutlisterUI"
     @width = 600
-    @height = 555
+    @height = 640
     @left = 100
     @top = 100
     @formats = get_format_list
@@ -128,7 +128,7 @@ class ToolWebUI < WebUI
       # assume it is a superclass for another class. 
       if s.display_name != nil
         
-        subclass_list << "{ 'name' : '#{s}',  'display_name' : '#{s.display_name}'}" 
+        subclass_list << ["#{s}", "#{s.display_name}"]
       
       else
         
@@ -140,7 +140,7 @@ class ToolWebUI < WebUI
     
     puts subclass_list if CUTLISTER_DEBUG
     
-    return "[" + subclass_list.join(',') + "]"
+    return subclass_list
     
   end
   
@@ -162,7 +162,7 @@ class ToolWebUI < WebUI
       # assume it is a superclass for another class.
       if s.display_name != nil
       
-        subclass_list << "{ 'name' : '#{s}',  'display_name' : '#{s.display_name}'}" 
+        subclass_list << ["#{s}", "#{s.display_name}"]
       
       else
       
@@ -174,7 +174,7 @@ class ToolWebUI < WebUI
     
     puts subclass_list if CUTLISTER_DEBUG
     
-    return "[" + subclass_list.join(',') + "]"
+    return subclass_list
     
   end
   
@@ -294,10 +294,12 @@ class ToolWebUI < WebUI
       puts "[ToolWebUI.display] Showing GUI dialog." if CUTLISTER_DEBUG
       
       # Run a script to populate the "Formats" select box in the WebDialog.
-      @dialog.execute_script("populate_format_list(#{@formats});")
+      # @dialog.execute_script("populate_format_list(#{@formats});")
+      @dialog.execute_script("$('#id_format').populate_select({ items: #{@formats.inspect} });")
 
       # Run a script to populate the "List Types" select box in the WebDialog.
-      @dialog.execute_script("populate_list_types(#{@list_types});")
+      # @dialog.execute_script("populate_list_types(#{@list_types});")
+      @dialog.execute_script("$('#id_list_type').populate_select({ items: #{@list_types.inspect} });")
       
     }
 
