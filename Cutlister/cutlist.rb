@@ -84,7 +84,7 @@ class Cutlist
   end
   
   # This method constructs all the rows for a particular section.
-  def rows(parts = @parts)
+  def rows(parts=@parts)
     
     @renderer.rows(parts)
     
@@ -98,7 +98,7 @@ class Cutlist
   end
   
   # This method returns a footer for a section. 
-  def section_footer(parts = @parts)
+  def section_footer(parts=@parts)
     
     # Count the parts (hardware), calculate the board feet (solid stock), or 
     # calculate the square footage (sheet goods).
@@ -365,7 +365,6 @@ class IndividualCutlist < Cutlist
   @display_name = "Individual"
   @description = "This cut list is usually used when assembling cabinets."
   
-  # TODO: Group items based on cabinet number.
   def build
     
     data = heading(:css_location => "css/html-cutlist.css").to_s
@@ -461,9 +460,6 @@ class IndividualCutlist < Cutlist
       
     }
     
-    
-    
-    
     data += footer().to_s
     
     # Return the results.
@@ -488,14 +484,6 @@ class FullCutlist < Cutlist
 
   @display_name = "Full"
   @description = "This cut list exports all the items, unformatted."
-
-  # def initialize(renderer, parts)
-  #   
-  #   super(renderer, parts)
-  #   
-  # end
-
-  # TODO: Output all content without grouping.
   
   def build
     
@@ -504,27 +492,6 @@ class FullCutlist < Cutlist
     data += page_title().to_s
     
     data += rows(@parts.all).to_s
-
-    # # Show sheet goods section.
-    # if @options["show_sheets"]
-    #   
-    #   data += rows(@parts.sheets).to_s
-    #   
-    # end
-    # 
-    # # Show solid stock section.
-    # if @options["show_solids"]
-    #   
-    #   data += rows(@parts.solids).to_s
-    # 
-    # end
-    # 
-    # # Show hardware section.
-    # if @options["show_hardware"]
-    #   
-    #   data += rows(@parts.hardware).to_s
-    # 
-    # end
     
     data += footer().to_s
     

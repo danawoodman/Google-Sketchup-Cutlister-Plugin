@@ -278,6 +278,8 @@ class HTMLRenderer < Renderer
     
     EOS
     
+    html += section_footer(parts)
+    
     html
     
   end
@@ -331,7 +333,11 @@ class HTMLRenderer < Renderer
     #   <p><strong>Total Parts</strong> #{total_parts}</p>
     # 
     # EOS
-    ''
+    
+    # TODO: Return number of parts, even if grouped!
+    
+    return "<p class=\"section-footer\">#{parts.length} parts</p>"
+    
     
   end
   

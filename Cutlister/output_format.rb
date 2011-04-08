@@ -39,28 +39,10 @@ class OutputFormat
     @model_path = File.dirname(model_path)
     
   end
-
-  # # Add a display name property for displaying in the web dialog UI.
-  # def self.display_name
-  # 
-  #   @display_name
-  # 
-  # end
-  # 
-  # # Add a description property for displaying in the web dialog UI.
-  # def self.description
-  # 
-  #   @description
-  # 
-  # end
   
   # Open (e.g. create) any files needed for the ouput format.
   def open_files
   end
-  
-  # # Open the appropriate renderer for the content.
-  # def open_renderer
-  # end
   
   # Close (e.g. save) all open files.
   def close_files

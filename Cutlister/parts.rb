@@ -154,23 +154,7 @@ class PartList
   # Returns all the parts as an array of hashes.
   def to_hash(parts_array)
     
-    parts_array.collect! { |p| 
-      # {
-      #   'sub_assembly' => p.sub_assembly,
-      #   'part_name' => p.part_name,
-      #   'quantity' => p.quantity,
-      #   'material' => p.material,
-      #   'is_sheet' => p.is_sheet,
-      #   'is_solid' => p.is_solid,
-      #   'is_hardware' => p.is_hardware,
-      #   'thickness' => p.thickness,
-      #   'width' => p.width,
-      #   'length' => p.length,
-      #   'area' => p.area,
-      #   'volume' => p.volume,
-      #   'square_feet' => p.square_feet,
-      #   'board_feet' => p.board_feet,
-      # }
+    parts_array.collect! { |p|
       p.to_hash
     }
     
@@ -206,10 +190,14 @@ class PartList
     level_has_parts = false
     
     # Collect all the parts that are components or groups and add them to `array`.
-    selection.each { |s| 
+    selection.each { |s|
+      
+      # Store wether or not this part is a component or group.
+      is_group = s.is_a? Sketchup::Group
+      is_component = s.is_a? Sketchup::ComponentInstance
       
       # Only cut list components or groups.
-      if (s.typename == "ComponentInstance" || s.typename == "Group") && s.layer.visible?
+      if (is_component || is_group) && s.layer.visible?
         
         # Set default values...
         is_sheet = false
@@ -220,7 +208,7 @@ class PartList
         
         # If the part is a Component, get it's name, material and sub parts 
         # based on it's "definition".
-        if s.typename == "ComponentInstance"
+        if is_component
           
           part_name = s.definition.name
           sub_parts = s.definition.entities
@@ -231,7 +219,7 @@ class PartList
         
         # If the part is a Group, get it's name, material and sub parts 
         # based on it's property methods.
-        elsif s.typename == "Group"
+        else is_group
           
           part_name = s.name
           sub_parts = s.entities
@@ -335,19 +323,6 @@ class PartList
     # If it gets here, than this level has parts.
     level_has_parts
     
-    # puts "[PartList.get_parts] parts_array: #{parts_array}" if CUTLISTER_DEBUG
-    # 
-    # # Debug each part...
-    # parts_array.each { |p|
-    #   
-    #   puts "[PartList.get_parts] part: #{p.typename}, #{p.cabinet_name}, #{p.quantity}, #{p.width},  #{p.length}, #{p.thickness}, #{p.material}, #{p.area}, #{p.volume}, #{p.board_feet}, #{p.square_feet}\n"
-    #   
-    # } if CUTLISTER_DEBUG
-    # 
-    # puts "\n\n" if CUTLISTER_DEBUG
-    # 
-    # parts_array # Returns the array of parts.
-    
   end
   
   # Returns true if there are no parts, false if there are parts.
@@ -446,16 +421,6 @@ class Part
     puts "[Part.initialize] @square_feet: #{@square_feet}\n\n" if CUTLISTER_DEBUG
     puts "[Part.initialize] @board_feet: #{@board_feet}\n\n" if CUTLISTER_DEBUG
     
-    
-    # @lengthInFeet = @length.to_feet
-    # @material = material
-    # @name = strip(name, @length.to_s, @width.to_s, @thickness.to_s )
-    # @subAssemblyName = strip(subAssemblyName, @length.to_s, @width.to_s, @thickness.to_s )
-    # @canRotate = true
-    # @metricVolume = metricVolume
-    # @metric = metricModel?
-    # @locationOnBoard = nil
-    
   end
   
   # 
@@ -477,21 +442,6 @@ class Part
       'board_feet' => self.board_feet,
     }
   end
-
-  # def dimension_calculations
-  # 
-  #   area = @length * @width
-  #   volume = area * @thickness
-  #   square_feet = area / 144
-  #   board_feet = volume / 144
-  #   
-  #   # NOTE: Should this be integers or strings???
-  #   @area = area.to_s
-  #   @volume = volume.to_s
-  #   @square_feet = square_feet.to_s
-  #   @board_feet = board_feet.to_s
-  # 
-  # end
 
   # Bubble sort: Sorts in ascending order.
   def get_sorted_array(array)
@@ -518,193 +468,5 @@ class Part
     return array
 
   end
-
-  # def typename
-  #   
-  #   'foobar'
-  #   
-  # end
-
-  # def sub_assembly
-  #   
-  #   # If there is a sub_assembly_name, than use that, else show "N/A".
-  #   @sub_assembly ? @sub_assembly : 'N/A'
-  #   
-  # end
-  # 
-  # def part_name
-  #   
-  #   # If there is a part_name, show that, or else show `N/A'.
-  #   @part_name ? @part_name : 'N/A'
-  #   
-  # end
-  # 
-  # def quantity
-  #   
-  #   # TODO: Calculate quantities...
-  #   '1'
-  #   
-  # end
-  
-  # def width
-  #   
-  #   @width
-  #   
-  # end
-  # 
-  # def length
-  #   
-  #   @length
-  #   
-  # end
-  # 
-  # def thickness
-  #   
-  #   @thickness
-  #   
-  # end
-  # 
-  # def material
-  #   
-  #   @material
-  #   
-  # end
-  # 
-  # def area
-  #   
-  #   @area.to_s
-  #   
-  # end
-  # 
-  # def volume
-  #   
-  #   @volume.to_s
-  #   
-  # end
-  # 
-  # def square_feet
-  #   
-  #   @square_feet.to_s
-  #   
-  # end
-  # 
-  # def board_feet
-  #   
-  #   @board_feet.to_s
-  #   
-  # end
-
-  # Checks to see if a part is a sheet. Returns true if it is, false if not.
-  # def is_sheet
-  #   
-  #   puts "[Part.is_sheet]: true\n\n" if CUTLISTER_DEBUG
-  #   
-  #   @is_sheet
-  #   # is_sheet = false
-  #   #     
-  #   #     # Do a case-insensitive search on all the sheet materials to see if the 
-  #   #     # material matches.
-  #   #     @sheet_materials.each { |m|
-  #   #       
-  #   #       if m.index(/#{@material}/i) != nil
-  #   #         
-  #   #         is_sheet = true
-  #   #         
-  #   #       end
-  #   #       
-  #   #     }
-  #   #     
-  #   #     puts "[Part.is_sheet]: (#{@material}) #{is_sheet}" if CUTLISTER_DEBUG
-  #   #     
-  #   #     is_sheet
-  #   
-  # end
-  # 
-  # # Checks to see if a part is a solid. Returns true if it is, false if not.
-  # def is_solid
-  #   
-  #   puts "[Part.is_solid]: true\n\n" if CUTLISTER_DEBUG
-  #   
-  #   @is_solid
-  #   
-  #   # is_solid = false
-  #   #     
-  #   #     # Do a case-insensitive search on all the sheet materials to see if the 
-  #   #     # material matches.
-  #   #     @solid_materials.each { |m|
-  #   #       
-  #   #       if m.index(/#{@material}/i) != nil
-  #   #         
-  #   #         is_solid = true
-  #   #         
-  #   #       end
-  #   #       
-  #   #     }
-  #   #     
-  #   #     puts "[Part.is_solid]: (#{@material}) #{is_solid}" if CUTLISTER_DEBUG
-  #   #     
-  #   #     is_solid
-  #   
-  # end
-  # 
-  # # Checks to see if a part is hardware. Returns true if it is, false if not.
-  # def is_hardware
-  #   
-  #   puts "[Part.is_hardware]: true\n\n" if CUTLISTER_DEBUG
-  #   
-  #   @is_hardware
-  #   
-  #   # # If the part is not a sheet or a solid, than it is assumed to be hardware.
-  #   #     is_hardware = is_sheet && is_solid ? false : true
-  #   #     
-  #   #     puts "[Part.is_hardware]: (#{@material}) #{is_hardware}" if CUTLISTER_DEBUG
-  #   #     
-  #   #     is_hardware
-  #   
-  # end
   
 end
-
-
-# # This class represents sheet goods.
-# # 
-# # Sheet goods usually represent items such as plywood, MDF, or anything that 
-# # is in the form of a sheet. The plug-in interprets anything in your 
-# # "Sheet Goods" list as a sheet part.
-# # 
-# # We need to calculate the square footage of sheets because that is the 
-# # common unit of measure.
-# class SheetGood < Part
-#   
-# end
-# 
-# 
-# # This class represents a part of solid stock.
-# # 
-# # Solid stock usually represents boards of lumber such as planks. The plug-in 
-# # interprets anything in your "Solid Stock" list as a solid part.
-# # 
-# # We need to calculate the board feet of solid stock because that is the 
-# # common unit of measure.
-# class SolidStock < Part
-#   
-# end
-# 
-# 
-# # This class represents a hardware part.
-# # 
-# # Hardware is basically anything other than a sheet good or solid stock. It
-# # usually represents things like door hinges, handles, drawer slides and the 
-# # like but could represent anything that has not been defined in the sheet 
-# # good or solid stock list of keywords.
-# # 
-# # We need to calculate the number of hardware parts because that is the only 
-# # logical way to measure a collection of hardware because hardware could be 
-# # anything.
-# # 
-# # If you find a part that is getting classified as hardware that should be 
-# # solid stock or sheet goods, make sure it has a material applied to it and 
-# # that tha material is in either the sheet good or solid part lists in the UI.
-# class Hardware < Part
-#   
-# end
