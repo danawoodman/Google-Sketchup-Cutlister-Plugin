@@ -335,8 +335,10 @@ class HTMLRenderer < Renderer
     # EOS
     
     # TODO: Return number of parts, even if grouped!
+    quantity = 0
+    parts.each { |p| quantity += p['quantity'] }
     
-    return "<p class=\"section-footer\">#{parts.length} parts</p>"
+    return "<p class=\"section-footer\">#{quantity} parts</p>"
     
     
   end
