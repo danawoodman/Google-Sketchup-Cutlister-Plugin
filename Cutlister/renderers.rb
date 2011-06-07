@@ -316,30 +316,29 @@ class HTMLRenderer < Renderer
   
   def section_footer(parts)
     
-    # parts_collection = Parts.new(parts)
-    # 
-    # board_feet = parts_collection.get_board_feet
-    # square_footage = parts_collection.get_square_footage
-    # total_parts = parts_collection.get_total_parts
-    # 
-    # # TODO: Show count (hardware), board ft (solid), sq ft (sheet), or a 
-    # # combination of all three depending on what parts are passed.
-    # 
-    # # Return the board feet, square footage and total parts.
-    # <<-EOS
-    # 
-    #   <p><strong>Total Board Feet</strong> #{board_feet} board feet</p>
-    #   <p><strong>Total Square Footage</strong> #{square_footage} sq. ft.</p>
-    #   <p><strong>Total Parts</strong> #{total_parts}</p>
-    # 
-    # EOS
-    
-    # TODO: Return number of parts, even if grouped!
+    # Initialize variables.
     quantity = 0
-    parts.each { |p| quantity += p['quantity'] }
+    square_feet = 0
+    board_feet = 0
     
-    return "<p class=\"section-footer\">#{quantity} parts</p>"
+    # Collect the totals for the footer.
+    parts.each { |p|
+      puts "Part:\n\t#{p.inspect}"
+      quantity += p['quantity']
+      square_feet += p['square_feet']
+      board_feet += p['board_feet']
+    }
     
+    # Construct the footer HTML.
+    html = "<p class=\"section-footer\">"
+    html += "#{quantity} parts | "
+    html += "%.2f" % board_feet
+    html += " board feet | "
+    html += "%.2f" % square_feet
+    html += " square feet"
+    html += "</p>"
+    
+    return html
     
   end
   
