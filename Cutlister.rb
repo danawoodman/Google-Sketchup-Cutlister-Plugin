@@ -43,7 +43,7 @@ require 'extensions.rb'
 
 # Toggle whether debugging is on or off ("true" means on, "false" means off).
 CUTLISTER_VERSION = '1.0'
-CUTLISTER_DEBUG = false
+$cutlister_debug = false
 CUTLISTER_BASE_PATH = File.dirname(__FILE__)
 
 # Register plugin as an extension.

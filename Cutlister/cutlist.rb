@@ -25,10 +25,12 @@ class Cutlist
     @options = options
     @title = title()
     
-    puts "[Cutlist.initialize] @model: #{@model}" if CUTLISTER_DEBUG
-    puts "[Cutlist.initialize] @renderer: #{@renderer}" if CUTLISTER_DEBUG
-    puts "[Cutlist.initialize] @parts: #{@parts.inspect}" if CUTLISTER_DEBUG
-    puts "[Cutlist.initialize] @options: #{@options.inspect}" if CUTLISTER_DEBUG
+    if $cutlister_debug
+      puts "[Cutlist.initialize] @model: #{@model}"
+      puts "[Cutlist.initialize] @renderer: #{@renderer}"
+      puts "[Cutlist.initialize] @parts: #{@parts.inspect}"
+      puts "[Cutlist.initialize] @options: #{@options.inspect}"
+    end
     
   end
   
@@ -52,7 +54,7 @@ class Cutlist
     
     title = "Cutlist for: #{@model.title}"
     
-    puts "[Cutlist.title]: #{title}" if CUTLISTER_DEBUG
+    puts "[Cutlist.title]: #{title}" if $cutlister_debug
     
     title
     
@@ -66,7 +68,7 @@ class Cutlist
     
     heading = @renderer.heading(title, opts)
     
-    puts "[Cutlist.heading]: #{heading}" if CUTLISTER_DEBUG
+    puts "[Cutlist.heading]: #{heading}" if $cutlister_debug
     
     heading
     
@@ -77,7 +79,7 @@ class Cutlist
     
     page_title = @renderer.title title()
     
-    puts "[Cutlist.page_title]: #{page_title}" if CUTLISTER_DEBUG
+    puts "[Cutlist.page_title]: #{page_title}" if $cutlister_debug
     
     page_title
     
@@ -128,7 +130,7 @@ class Cutlist
   # If you want a different format, over-ride this class in your sub-class.
   def build
     
-    puts "[Cutlist.build] Building cutlist..." if CUTLISTER_DEBUG
+    puts "[Cutlist.build] Building cutlist..." if $cutlister_debug
     
     data = heading().to_s
     
@@ -278,6 +280,7 @@ class BatchedCutlist < Cutlist
       }
 
     }
+    
     # Sort by materials.
     parts_by_material = grouped_parts.sort { |a,b|
       a[0] <=> b[0]

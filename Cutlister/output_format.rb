@@ -22,7 +22,7 @@ class OutputFormat
     
     model_path = @model.path
     
-    puts "[OutputFormat.initialize] Model path: #{model_path}" if CUTLISTER_DEBUG
+    puts "[OutputFormat.initialize] Model path: #{model_path}" if $cutlister_debug
     
     if model_path == ""
       
@@ -108,7 +108,7 @@ class FileOutputFormat < OutputFormat
     
     @full_file_name = "#{@model_path}/#{@model_name}_#{@file_suffix}"
     
-    puts "[FileOutputFormat.open_files] Opening file: #{@full_file_name}" if CUTLISTER_DEBUG
+    puts "[FileOutputFormat.open_files] Opening file: #{@full_file_name}" if $cutlister_debug
     
     @file = File.new(@full_file_name, "w")
     
@@ -122,7 +122,7 @@ class FileOutputFormat < OutputFormat
 
   def close_files
     
-    puts "[FileOutputFormat.close_files] Closing files..." if CUTLISTER_DEBUG
+    puts "[FileOutputFormat.close_files] Closing files..." if $cutlister_debug
     
     @file.close
     
@@ -130,7 +130,7 @@ class FileOutputFormat < OutputFormat
   
   def display_results
     
-    puts "[FileOutputFormat.display_results] Displaying results..." if CUTLISTER_DEBUG
+    puts "[FileOutputFormat.display_results] Displaying results..." if $cutlister_debug
     
     # TODO: Have an alert in the UI letting them know it was a success. Would 
     # be nice to also have the the file be linked to or auto opened...

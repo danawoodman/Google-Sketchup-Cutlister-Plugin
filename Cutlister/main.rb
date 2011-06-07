@@ -1,5 +1,5 @@
-puts "[Cutlister.rb] Debugging is on." if CUTLISTER_DEBUG
-puts "[Cutlister.rb] Version of Cutlister is: #{CUTLISTER_VERSION}" if CUTLISTER_DEBUG
+puts "[Cutlister.rb] Debugging is on." if $cutlister_debug
+puts "[Cutlister.rb] Version of Cutlister is: #{CUTLISTER_VERSION}" if $cutlister_debug
 
 # Load all the application files.
 load File.join(CUTLISTER_BASE_PATH, 'Cutlister/utils.rb')

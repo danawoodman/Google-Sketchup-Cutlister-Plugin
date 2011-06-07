@@ -144,8 +144,8 @@ class HTMLRenderer < Renderer
     
     css_file_contents = IO.read(css_file_path)
     
-    puts "[HTMLRenderer.heading] css_location: #{css_location}" if CUTLISTER_DEBUG
-    puts "[HTMLRenderer.heading] css_file_path: #{css_file_path}" if CUTLISTER_DEBUG
+    puts "[HTMLRenderer.heading] css_location: #{css_location}" if $cutlister_debug
+    puts "[HTMLRenderer.heading] css_file_path: #{css_file_path}" if $cutlister_debug
     
     return <<-EOS
     
@@ -261,7 +261,7 @@ class HTMLRenderer < Renderer
       
       }
       
-      puts "[HTMLRenderer.rows] all_rows: #{all_rows}" if CUTLISTER_DEBUG
+      puts "[HTMLRenderer.rows] all_rows: #{all_rows}" if $cutlister_debug
       
       html += all_rows.to_s
     
@@ -300,7 +300,7 @@ class HTMLRenderer < Renderer
         val = val.to_html_fraction(@round_dimensions)
       end
 
-      puts "[HTMLRenderer.row] row values: #{f[0]}, #{val}\n\n" if CUTLISTER_DEBUG
+      puts "[HTMLRenderer.row] row values: #{f[0]}, #{val}\n\n" if $cutlister_debug
       
       html += "<td>#{val.to_s}</td>"
       
@@ -308,7 +308,7 @@ class HTMLRenderer < Renderer
       
     html += "</tr>"
     
-    puts "[HTMLRenderer.row] row html: #{html}" if CUTLISTER_DEBUG
+    puts "[HTMLRenderer.row] row html: #{html}" if $cutlister_debug
     
     html
     
@@ -467,7 +467,7 @@ class CSVRenderer < Renderer
       
       }
       
-      puts "[CSVRenderer.rows] all_rows: #{all_rows}" if CUTLISTER_DEBUG
+      puts "[CSVRenderer.rows] all_rows: #{all_rows}" if $cutlister_debug
       
       data += all_rows.to_s
     
@@ -500,7 +500,7 @@ class CSVRenderer < Renderer
       data += "#{val.to_s}"
       data += f == fields.last ? "\n" : ","
 
-      puts "[CSVRenderer.row] row values: #{f[0]}, #{val}\n\n" if CUTLISTER_DEBUG
+      puts "[CSVRenderer.row] row values: #{f[0]}, #{val}\n\n" if $cutlister_debug
       
     }
     
