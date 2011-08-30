@@ -1,5 +1,4 @@
 
-
 # This class controls the different list types for a cut list (e.g. Batched 
 # Lists, Individual Lists, etc...)
 # 
@@ -291,20 +290,18 @@ class BatchedCutlist < Cutlist
 
       # Sort thicknesses.
       parts_by_thickness = t[1].sort { |a,b|
-        a[0] <=> b[0]
+        -a[0] <=> -b[0]
       }
-      parts_by_thickness.reverse!
 
       # Go through each thickness key.
       parts_by_thickness.each { |p| # p for parts
 
         # Sort parts by width, then length.
         parts = p[1].sort { |a,b|
-          a['width'] <=> b['width']
+          -a['width'] <=> -b['width']
           # TODO: Get sub-sorting by length.
           # a['length'] <=> b['length']
         }
-        parts.reverse!
         
         # Create a parts array to store the parts in.
         parts_array = []
